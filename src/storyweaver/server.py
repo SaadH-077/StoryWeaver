@@ -243,7 +243,7 @@ def create_app(settings: Settings | None = None, services: Services | None = Non
         shape = shape_for(body.request.minutes, body.request.audience)
         deps = Deps(s.settings, s.router)
         try:  # a wish is only useful while the story is still playing: never keep working on it for long
-            scripts, question = await asyncio.wait_for(
+            scripts, question, newcomers = await asyncio.wait_for(
                 revise_story(deps, body.request, shape, body.bible, body.told, body.wish, body.part, body.chosen,
                              body.fresh, body.remaining_words), REVISE_BUDGET_S)
         except (TimeoutError, LLMError) as exc:
@@ -252,7 +252,9 @@ def create_app(settings: Settings | None = None, services: Services | None = Non
                   for i in output_issues(line.text, body.request.audience)]
         if issues:
             raise HTTPException(422, "The rewrite did not pass the safety checks; the story continues as it was.")
+        newcomers = [c for c in newcomers if screen_snippet(f"{c.name} {c.description}")[0]]
         return {"part": body.part, "fresh": body.fresh, "question": question,
+                "characters": [c.model_dump() for c in newcomers],
                 "chapters": [chapter_result(index, sc) for index, sc in scripts]}
 
     @app.post("/api/chapter")

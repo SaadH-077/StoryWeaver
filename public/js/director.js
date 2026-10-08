@@ -33,6 +33,28 @@ const GOODBYES = {
   adults: (t) => `That was ${t}. Thank you for listening.`,
 };
 
+/** The newcomer a plain wish asks for, from its words alone: "Add a friendly firefly to the story" → "Friendly firefly". */
+function newcomerIn(wish) {
+  const m = (wish || "").match(/\b(?:add|bring(?:\s+in)?|introduce|include|invite|meet|want|wish for|have)\s+(?:a|an|the|some|my|another)\s+([a-z][a-z' -]{1,40})/i);
+  if (!m) return null;
+  const what = m[1].replace(/\s+(?:to|into|in|on|at|who|that|which|so|and|with|for)\b.*$/i, "").trim();
+  const named = what.match(/^(.*?)\s+(?:named|called)\s+([a-z']+)/i); // "a firefly named Flick" → Flick, a firefly
+  const name = named ? named[2] : what;
+  return name ? { name: name[0].toUpperCase() + name.slice(1), emoji: "✨", description: named ? named[1] : "" } : null;
+}
+
+/** A new name in the rewritten lines: "a firefly named Flick", or a capitalised word that is not the start of a
+ *  sentence and is not a known character ("It was Flick, the friendly firefly. Flick glowed…" → Flick). */
+function newName(text, known) {
+  const called = text.match(/\b(?:named|called)\s+([A-Z][a-z]+)/);
+  if (called && !known.has(called[1].toLowerCase())) return called[1];
+  const counts = new Map();
+  for (const m of text.matchAll(/(?<=[a-z,]\s)([A-Z][a-z]{2,})\b/g)) {
+    if (!known.has(m[1].toLowerCase())) counts.set(m[1], (counts.get(m[1]) || 0) + 1);
+  }
+  return [...counts.entries()].sort((x, y) => y[1] - x[1])[0]?.[0] || null;
+}
+
 function sentences(text, maxPerLine = 2) {
   const parts = (text.match(/[^.!?…]+[.!?…]+["”’']?|[^.!?…]+$/g) || [text]).map((s) => s.trim()).filter(Boolean);
   const lines = [];
@@ -361,7 +383,7 @@ export class Director {
     this.queue.unshift(...items, { kind: "chapter-end", index });
 
     this.note("director", script.choices.length
-      ? `Part ${index + 1} is playing; <b>both</b> endings are already written, so whichever you choose continues at once.`
+      ? `Part ${index + 1} is playing; <b>both</b> endings are ready, so whichever you choose continues at once.`
       : `Part ${index + 1} is playing — everything was written before the story began, so nothing waits.`);
   }
 
@@ -405,7 +427,7 @@ export class Director {
       for (const option of choices) {
         // a painted preview costs nothing; the real picture is only made for the path that is chosen
         ctl.setImage(option.keyword, this.visuals.paint({ ambience: next.ambience, mood: next.music, seed: option.label }));
-        this.prepare(index + 1, this.choiceNote(index, option)).then(() => ctl.setReady(option.keyword)).catch(() => {});
+        this.prepare(index + 1, this.choiceNote(index, option)).catch(() => {});
       }
     }).finally(() => { this.choiceOpen = null; });
   }
@@ -475,6 +497,7 @@ export class Director {
         remaining_words: remaining, chosen }, this.controller.signal);
       if (this.stopped) return;
       if (this.segment !== seg) throw new Error("the story had already moved on");
+      if (!fresh && !this.queue.some((it) => it.kind === "chapter-end" && it.index === part)) throw new Error("that part had already ended");
       const parts = res.chapters;
       const ahead = this.queuedSeconds();
       if (fresh && part === 1) { // both endings, rewritten while the choice is open
@@ -489,15 +512,41 @@ export class Director {
             options: options.map((o) => o.label) };
         }
       }
+      this.welcome(res.characters, steer, parts);
       ui.toast("✓ The story now follows your wish.", "good");
       ui.logEvent("agent", "storyteller", "✓ wish woven in — the story continues with it", "", performance.now() - this.t0);
       this.note("storyteller", `${this.notesFor("storyteller")}<br>Wish “${ui.esc(steer)}” woven in from the next sentence on.`);
     } catch (err) {
       if (this.stopped) return;
+      if (this.segment === seg && this.queue.some((it) => it.kind === "line")) { // say so, rather than leave it hanging
+        this.queue.unshift({ ...kind, text: "The story crew is busy right now, so let's keep that idea for our next story." });
+        this.wake();
+      }
       ui.toast("The story continues as it was.", "");
       ui.logEvent("warn", "storyteller", `wish not applied (${err.message})`, "", performance.now() - this.t0);
     } finally {
       this.wishing = false;
+    }
+  }
+
+  /** Whoever a wish brings into the story joins the cast on the right: the Storyteller names them; if it names no
+   *  one, the wish and the new lines do ("add a friendly firefly" + "…a firefly named Luma…" → Luma, friendly firefly). */
+  welcome(characters, steer, parts = []) {
+    let newcomers = (characters || []).filter((c) => c?.name);
+    const guess = !newcomers.length && newcomerIn(steer);
+    if (guess) {
+      const known = new Set((this.characters || []).map((c) => c.name.toLowerCase()));
+      const text = parts.flatMap((p) => p.script?.lines || []).map((l) => l.text).join(" ");
+      const named = newName(text, known);
+      if (named) { guess.description ||= guess.name; guess.name = named; }
+      newcomers = [guess];
+    }
+    for (const c of newcomers) {
+      const id = `wish-${c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+      if (this.characters?.some((k) => k.name.toLowerCase() === c.name.toLowerCase())) continue;
+      if (!ui.addToCast({ id, name: c.name, emoji: c.emoji || "✨", role: c.description || "From your wish", description: c.description })) continue;
+      ui.logEvent("agent", "storyteller", `+ ${c.name} joins the story`, c.description || "", performance.now() - this.t0);
+      this.note("casting", `${this.notesFor("casting")}<br><b>${ui.esc(c.name)}</b> joined from your wish (voiced through the narrator).`);
     }
   }
 

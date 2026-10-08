@@ -158,9 +158,12 @@ live log, safety decisions, the story bible and measured numbers; *How it works*
 What a listener sees, from the first idea to the last line, and what the agents are doing at each moment.
 
 **1 · Choose.** Type or say an idea (or tap one), pick the listener (little ones, family, grown-ups) and the length
-(1, 2 or 3 minutes). The "Weave my story" button wakes up only when the agents are ready.
+(1, 2 or 3 minutes — every one of them has a moment where you decide). The home page is a loom: a tapestry is woven
+row by row at the edges of the screen while you choose, a golden thread sews itself under the headline, and a twisted
+thread runs down the form, tying a knot at each step; once there is an idea, it runs all the way to "Weave my story"
+(which wakes up only when the agents are ready).
 
-![Home: idea, listener, length and voice](docs/images/home.png)
+![Home: a tapestry woven at the edges, the thread through the form](docs/images/home.jpg)
 
 **2 · The crew assembles.** While the Guardian screens the request and the Storyteller writes the whole story in
 parallel, each agent's card joins the cast and lights up as it starts work; the thread above fills as each stage
@@ -169,17 +172,20 @@ finishes. The host's greeting is already speaking, so the ~3 s of writing is nev
 ![Loading screen: the crew of ten assembles, working agents light up](docs/images/weaving.jpg)
 
 **3 · The story plays — without a pause.** Every part and both endings already exist, so narration, pictures (one
-per minute), music and sound flow continuously. Captions show who is speaking and how (*narrator · warm*); the
-timeline shows the parts and where the choice comes.
+per minute), music and sound flow continuously. Captions show who is speaking and how (*narrator · warm*), the
+characters are listed on the right (and light up as they speak), and the timeline shows the parts and where the
+choice comes. Every story has the choice — even a one-minute tale.
 
-| The story plays | You choose (both paths already written) |
+| The story plays, its characters on the right | You choose — both paths are ready, so it continues at once |
 |---|---|
-| ![Story playing](docs/images/story.png) | ![A choice](docs/images/choice.png) |
+| ![Story playing, with the characters on the right](docs/images/story.jpg) | ![A choice](docs/images/choice.jpg) |
 
 **4 · Speak to it.** Hold the button (or Space) and talk: pick an option by voice, ask a question about the story,
 or make a wish (*"add a friendly firefly who glows like a lantern"*). The host answers at once ("Ooh, what a lovely
 idea!"), the next sentence plays, and from then on the story follows the wish — with a new picture of it coming true;
-if the choice is still ahead, the choice and both endings follow the wish too. The story never stops for it.
+if the choice is still ahead, the choice and both endings follow the wish too. Anyone the wish brings in joins the
+characters on the right, sewn in with a *✨ your wish* tag. The story never stops for it; if the free models are too
+busy to rewrite it in time, the host says so and keeps the idea for the next story.
 
 ![Hold to talk: the listener is speaking](docs/images/listening.jpg)
 
@@ -374,7 +380,7 @@ START → precheck (lexicon) ─┬─ blocked ───────────
 | Decision | Why | Trade-off |
 |---|---|---|
 | **The whole story in one call** | A presentation-grade demo must never pause or fail mid-story. Writing everything up front — including both endings — means nothing is generated while the listener waits, and a story costs ~2 model calls instead of a dozen. On gpt-oss-20b it takes ~2.5 s, about as long as the greeting. | Less moment-to-moment improvisation; wishes rewrite the untold part in the background instead. |
-| **Short by design: 1, 2 or 3 minutes** | Free tiers allow a few thousand tokens per minute and ~150 pictures a day. Short stories with one picture per minute keep every run inside those limits; the planner still scales structure, choices and pictures with the time. | No epics in this prototype — the architecture itself is length-independent. |
+| **Short by design: 1, 2 or 3 minutes** | Free tiers allow a few thousand tokens per minute and ~150 pictures a day. Short stories with one picture per minute keep every run inside those limits; the planner scales words and pictures with the time, and every length — even one minute — has a choice. | No epics in this prototype — the architecture itself is length-independent. |
 | **Fastest model first, then fallbacks** | gpt-oss-20b answers at ~1,000 tokens/s; each role has an ordered chain of models with *separate* free limits, and a rate-limited model is remembered and skipped until it recovers. Budgets are sized per role because Groq counts the *requested* `max_tokens` against its limit. | Quality can vary slightly with the model that answered (visible in the crew panel). |
 | **Safety in parallel, released at a gate** | Screening and writing start together; nothing is spoken before the Guardian approves. | On a refusal the story call is wasted. |
 | **A deterministic Editor** | Checking every line with rules is instant, free and certain; models are used where nuance matters (the Guardian). | Rules are literal — which is why they sit behind a policy model, not instead of one. |

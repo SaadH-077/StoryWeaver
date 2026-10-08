@@ -36,9 +36,11 @@ SHELF: dict[str, dict[str, Any]] = {
         "question": "Should Pip follow the little light, or wake up his friend Mo the mole?",
         "characters": [
             {"id": "pip", "name": "Pip", "role": "hero", "description": "shy, kind and curious",
-             "look": "a small brown hedgehog with a red knitted scarf", "gender": "male", "age": "child"},
+             "look": "a small brown hedgehog with a red knitted scarf", "gender": "male", "age": "child",
+             "emoji": "🦔"},
             {"id": "mo", "name": "Mo", "role": "friend", "description": "a sleepy, cheerful mole who loves digging",
-             "look": "a round grey mole with pink paws and tiny glasses", "gender": "male", "age": "adult"}],
+             "look": "a round grey mole with pink paws and tiny glasses", "gender": "male", "age": "adult",
+             "emoji": "🐹"}],
         "parts": [
             _part("A Light in the Dark", "One night Pip sees a tiny light dancing in the meadow.", "mystery",
                   ["night", "forest"], 0.45, [
@@ -94,9 +96,11 @@ SHELF: dict[str, dict[str, Any]] = {
         "question": "Should Elsa row out to the fishing boat, or ring the old bell to warn it?",
         "characters": [
             {"id": "elsa", "name": "Elsa", "role": "hero", "description": "brave, careful and a little lonely",
-             "look": "a woman with a yellow raincoat and silver braids", "gender": "female", "age": "adult"},
+             "look": "a woman with a yellow raincoat and silver braids", "gender": "female", "age": "adult",
+             "emoji": "🧭"},
             {"id": "biscuit", "name": "Biscuit", "role": "friend", "description": "a clever ginger cat",
-             "look": "a fluffy ginger cat with a white tail tip", "gender": "male", "age": "adult"}],
+             "look": "a fluffy ginger cat with a white tail tip", "gender": "male", "age": "adult",
+             "emoji": "🐈"}],
         "parts": [
             _part("A Letter from Tomorrow", "A bottle brings a letter dated tomorrow, warning of a storm.",
                   "mystery", ["ocean", "wind"], 0.5, [
@@ -155,9 +159,11 @@ SHELF: dict[str, dict[str, Any]] = {
         "question": "Should Marta follow the footsteps, or draw the lane onto her map first?",
         "characters": [
             {"id": "marta", "name": "Marta", "role": "hero", "description": "precise, patient and secretly lonely",
-             "look": "a woman in a long green coat with ink-stained fingers", "gender": "female", "age": "adult"},
+             "look": "a woman in a long green coat with ink-stained fingers", "gender": "female", "age": "adult",
+             "emoji": "🗺️"},
             {"id": "tomas", "name": "Tomas", "role": "stranger", "description": "an old lamplighter who speaks softly",
-             "look": "an old man with a lamplighter's pole and a grey cap", "gender": "male", "age": "elder"}],
+             "look": "an old man with a lamplighter's pole and a grey cap", "gender": "male", "age": "elder",
+             "emoji": "🏮"}],
         "parts": [
             _part("The Missing Lane", "On the first warm night of spring, the hidden lane appears.", "mystery",
                   ["city", "night"], 0.5, [

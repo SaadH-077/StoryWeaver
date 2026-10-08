@@ -98,11 +98,29 @@ export function highlightFraction(spans, fraction) {
 
 export function hideCaption() { $("#caption").classList.add("hide"); }
 
+const capital = (s) => (s ? s[0].toUpperCase() + s.slice(1) : "");
+
+function castFace(c, color, portrait, tag = "") {
+  const avatar = portrait ? `<img src="${portrait.url}" alt="">` : esc(c.emoji || (c.name || "?").trim()[0] || "?");
+  return `<div class="cast-face${tag ? " new" : ""}" data-id="${esc(c.id)}" style="--spk:${color}" title="${esc(c.name)}${c.description ? ` — ${esc(c.description)}` : ""}">
+    <div class="cf-ava">${avatar}</div>
+    <div class="cf-text"><div class="cf-name">${esc(c.name)}</div><div class="cf-role">${esc(capital(c.role || ""))}</div></div>
+    ${tag ? `<span class="cf-tag">${esc(tag)}</span>` : ""}</div>`;
+}
+
+/** The characters of the story, on the right of the stage. */
 export function renderCast(characters, portraits) {
-  $("#cast-strip").innerHTML = characters.map((c) => {
-    const p = portraits.get(c.id);
-    return `<div class="cast-face" data-id="${esc(c.id)}" style="--spk:${speakerColor(c.id, characters)}" title="${esc(c.name)}">${p ? `<img src="${p.url}" alt="${esc(c.name)}">` : `<span>${esc((c.name || "?").trim()[0] || "?")}</span>`}</div>`;
-  }).join("");
+  $("#cast-strip").innerHTML = `<div class="cast-head">Characters</div>`
+    + characters.map((c) => castFace(c, speakerColor(c.id, characters), portraits.get(c.id))).join("");
+}
+
+/** Someone a spoken wish brought into the story: sewn into the cast as they arrive. */
+export function addToCast(member) {
+  const strip = $("#cast-strip");
+  if (strip.querySelector(`[data-id="${CSS.escape(member.id)}"]`)) return false;
+  const color = PALETTE[strip.querySelectorAll(".cast-face").length % PALETTE.length];
+  strip.insertAdjacentHTML("beforeend", castFace(member, color, null, "✨ your wish"));
+  return true;
 }
 
 export function setSpeaking(id) {
@@ -127,7 +145,7 @@ export function setProgress(segment, fraction, timeText) {
 export function showChoices({ question, options, timeout }, onPick) {
   $("#choice-q").textContent = question || "What should happen next?";
   $("#choice-cards").innerHTML = options.map((o) => `<button class="choice-card" data-k="${esc(o.keyword)}">
-      <span class="cc-key">say “${esc(o.keyword)}”</span><span class="cc-label">${esc(o.label)}</span><span class="cc-ready"></span></button>`).join("");
+      <span class="cc-key">say “${esc(o.keyword)}”</span><span class="cc-label">${esc(o.label)}</span></button>`).join("");
   document.querySelectorAll("#choice-cards .choice-card").forEach((b) => b.addEventListener("click", () => onPick(b.dataset.k, false)));
   $("#choices").hidden = false;
   const ring = $("#cd");
@@ -141,10 +159,6 @@ export function showChoices({ question, options, timeout }, onPick) {
     setImage(keyword, url) {
       const card = $(`#choice-cards [data-k="${CSS.escape(keyword)}"]`);
       if (card && url) card.style.setProperty("--card-bg", `url("${url}")`);
-    },
-    setReady(keyword) {
-      const el = $(`#choice-cards [data-k="${CSS.escape(keyword)}"] .cc-ready`);
-      if (el) el.textContent = "✓ this path is already written";
     },
     mark(keyword) { document.querySelectorAll("#choice-cards .choice-card").forEach((b) => b.classList.toggle("picked", b.dataset.k === keyword)); },
     close() { clearInterval(timer); setTimeout(() => { $("#choices").hidden = true; }, 650); },

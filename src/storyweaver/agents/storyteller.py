@@ -27,6 +27,7 @@ from ..schemas import (
     ChoiceOption,
     ChoiceSeed,
     DraftPart,
+    NewCharacter,
     ScriptLine,
     StoryBible,
     StoryDraft,
@@ -36,7 +37,7 @@ from ..schemas import (
     slugify,
 )
 from .deps import Deps
-from .writer import finalise_script, keyword_for, shots_rule
+from .writer import STOP_WORDS, finalise_script, keyword_for, shots_rule
 
 
 def _part_rule(words: int, lines: tuple[int, int], shots: int) -> str:
@@ -135,13 +136,8 @@ def assemble(draft: StoryDraft, request: StoryRequest, shape: StoryShape
     characters = [hero, *[c for c in draft.characters if c is not hero]]
     main, endings = draft.parts[0], list(draft.parts[1:3])
     with_choice = bool(shape.choice_after) and bool(endings)
-    if with_choice and len(main.choices) < 2:  # options missing: name them after the endings
-        taken: set[str] = set()
-        main.choices = []
-        for ending in endings[:2]:
-            keyword = keyword_for(ending.title, taken)
-            taken.add(keyword)
-            main.choices.append(ChoiceOption(keyword=keyword, label=ending.title))
+    if with_choice and len(main.choices) < 2:  # options missing: take them from the question, or the endings
+        main.choices = choices_for(draft.question, endings)
     if with_choice and len(endings) == 1:
         endings.append(endings[0])  # one ending for both paths: the story still flows
     labels = [c.label for c in main.choices[:2]]
@@ -165,11 +161,67 @@ def assemble(draft: StoryDraft, request: StoryRequest, shape: StoryShape
     branches = {}
     if with_choice:
         first = scripts[0]
-        if not any("?" in line.text for line in first.lines[-2:]):  # the narrator must ask, out loud
-            first.lines.append(ScriptLine(text=seed.question if seed else "What should happen next?", delivery="warm"))
+        asked = ask_aloud(first, bible.hero_name, seed.question if seed else "")  # out loud, naming both options
+        if bible.chapters[0].choice and asked:
+            bible.chapters[0].choice.question = asked
         for option, ending in zip(first.choices[:2], match_endings(first.choices[:2], endings[:2]), strict=False):
             branches[option.keyword] = finalise_script(_script(ending), bible, 1, story_shape)
     return bible, scripts, branches
+
+
+_MODAL = re.compile(r"^(?:\w+\s+)?(?:should|shall|will|would|could|can|does|do|must)\s+\S+\s+", re.IGNORECASE)
+
+
+def options_in(question: str) -> list[str]:
+    """The two options a spoken question names: "Should Pip follow the light, or wake up Mo?" → ["Follow the light",
+    "Wake up Mo"]. Empty if the question does not plainly name two."""
+    asked = question.strip().rstrip("?!. ").strip()
+    if " or " not in asked:
+        return []
+    first, second = asked.rsplit(" or ", 1)
+    first = re.split(r"[:—]\s*", first.rstrip(", "))[-1]
+    labels = [_MODAL.sub("", part).strip(" ,") for part in (first, second)]
+    if not all(labels) or any(len(label.split()) > 9 for label in labels):
+        return []
+    return [label[0].upper() + label[1:] for label in labels]
+
+
+def choices_for(question: str, endings: list[DraftPart]) -> list[ChoiceOption]:
+    """Options for a part whose writer forgot them: the ones the narrator's question names (so the cards always match
+    what was asked), or else the endings' titles."""
+    labels = options_in(question) or [ending.title for ending in endings[:2]]
+    taken: set[str] = set()
+    options = []
+    for label in labels:
+        keyword = keyword_for(label, taken)
+        taken.add(keyword)
+        options.append(ChoiceOption(keyword=keyword, label=label))
+    return options
+
+
+def _names(question: str, option: ChoiceOption) -> bool:
+    heard = set(re.findall(r"[a-z']+", question.lower()))
+    wanted = {w for w in re.findall(r"[a-z']+", option.label.lower()) if len(w) > 3 and w not in STOP_WORDS}
+    return option.keyword in heard or (bool(wanted) and len(wanted & heard) * 2 >= len(wanted))
+
+
+def ask_aloud(script: ChapterScript, hero: str, question: str = "") -> str:
+    """Make the part end with the narrator asking the question that names both options, out loud. Models sometimes
+    write options that differ from the question they wrote; the endings follow the options, so then the question is
+    rebuilt from them — what the listener hears, the cards and the endings always agree. Returns the question."""
+    options = script.choices[:2]
+    asked = [line.text for line in script.lines[-2:] if "?" in line.text]
+    spoken = " ".join(asked)
+    if len(options) < 2 or (spoken and all(_names(spoken, o) for o in options)):
+        if not spoken:
+            script.lines.append(ScriptLine(text=question or "What should happen next?", delivery="warm"))
+        return question if question and all(_names(question, o) for o in options) else (spoken or question)
+    while len(script.lines) > 3 and "?" in script.lines[-1].text:
+        script.lines.pop()
+    first, second = (o.label[:1].lower() + o.label[1:] for o in options)
+    rebuilt = f"What should {hero} do: {first}, or {second}?"
+    script.lines.append(ScriptLine(text=rebuilt, delivery="warm"))
+    return rebuilt
 
 
 def match_endings(options: list[ChoiceOption], endings: list[DraftPart]) -> list[DraftPart]:
@@ -226,10 +278,11 @@ async def write_story(deps: Deps, request: StoryRequest, prompt: str, shape: Sto
 
 async def revise_story(deps: Deps, request: StoryRequest, shape: StoryShape, bible: StoryBible, told: str,
                        wish: str, part: int, chosen: str = "", fresh: bool = True, remaining_words: int = 0
-                       ) -> tuple[list[tuple[int, ChapterScript]], str]:
+                       ) -> tuple[list[tuple[int, ChapterScript]], str, list[NewCharacter]]:
     """Weave the listener's wish into everything not yet told. ``part`` is the part being told (0: the opening or the
     first part, 1: an ending); ``fresh``: it has not started yet, so it is rewritten whole — otherwise it continues
-    from the last sentence told. Returns (part index, script) pairs in playing order, and the choice's question."""
+    from the last sentence told. Returns (part index, script) pairs in playing order, the choice's question and
+    the characters the wish brings in."""
     if fresh:
         needed, rules = parts_needed(shape, part, chosen), structure(shape, part, chosen)
     else:
@@ -243,6 +296,9 @@ async def revise_story(deps: Deps, request: StoryRequest, shape: StoryShape, bib
     indexes = [min(part + (i if part == 0 else 0), last) for i in range(len(remainder.parts))]
     parts = list(remainder.parts)
     if len(parts) == 3:  # the first part offers the choice: pair each option with the ending about it
+        if len(parts[0].choices) < 2:  # never fall back to the old options: the cards must match the new question
+            asked = remainder.question or next((ln.text for ln in reversed(parts[0].lines) if "?" in ln.text), "")
+            parts[0].choices = choices_for(asked, parts[1:])
         parts[1:] = match_endings(parts[0].choices[:2], parts[1:])
     scripts: list[tuple[int, ChapterScript]] = []
     for index, draft in zip(indexes, parts, strict=True):
@@ -255,9 +311,8 @@ async def revise_story(deps: Deps, request: StoryRequest, shape: StoryShape, bib
             script.shots = [wish_shot]
         scripts.append((index, script))
     question = remainder.question.strip()
-    if len(scripts) == 3:  # the narrator must ask, out loud
-        first = scripts[0][1]
-        if not any("?" in line.text for line in first.lines[-2:]):
-            first.lines.append(ScriptLine(text=question or "What should happen next?", delivery="warm"))
-        question = question or next((ln.text for ln in reversed(first.lines) if "?" in ln.text), "")
-    return scripts, question
+    if len(scripts) == 3:  # the narrator must ask, out loud, naming both options
+        question = ask_aloud(scripts[0][1], bible.hero_name, question)
+    known = {c.name.lower() for c in bible.characters}
+    newcomers = [c for c in remainder.new_characters if c.name.lower() not in known]
+    return scripts, question, newcomers

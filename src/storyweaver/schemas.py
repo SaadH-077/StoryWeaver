@@ -103,6 +103,12 @@ def slugify(value: Any) -> str:
     return slug or "narrator"
 
 
+def _emoji(value: Any) -> str:
+    """Keep only pictographic characters (and their joiners), at most one short emoji sequence."""
+    text = "".join(ch for ch in str(value or "") if ord(ch) >= 0x2000 or ch == "\u200d")
+    return text[:8]
+
+
 def _strings(value: Any, limit: int) -> list[str]:
     return [str(v) for v in (value or []) if str(v).strip()][:limit]
 
@@ -204,6 +210,12 @@ class CharacterSpec(BaseModel):
     gender: Literal["female", "male", "neutral"] = "neutral"
     age: Literal["child", "teen", "adult", "elder"] = "adult"
     accent: Literal["american", "british"] = "american"
+    emoji: str = ""  # one emoji that shows who they are (the cast panel while the story plays)
+
+    @field_validator("emoji", mode="before")
+    @classmethod
+    def _emoji(cls, value: Any) -> str:
+        return _emoji(value)
 
     @model_validator(mode="before")
     @classmethod
@@ -537,11 +549,30 @@ class StoryDraft(StoryOpening):
     parts: list[DraftPart] = Field(min_length=1, max_length=3)
 
 
+class NewCharacter(BaseModel):
+    """Someone a listener's wish brings into the story (shown joining the cast)."""
+
+    name: str
+    emoji: str = ""
+    description: str = ""
+
+    @field_validator("emoji", mode="before")
+    @classmethod
+    def _emoji(cls, value: Any) -> str:
+        return _emoji(value)
+
+
 class StoryRemainder(BaseModel):
     """The not-yet-told parts, rewritten to include a listener's wish."""
 
     parts: list[DraftPart] = Field(min_length=1, max_length=3)
     question: str = ""  # the choice's question, when the rewritten part offers the choice
+    new_characters: list[NewCharacter] = Field(default_factory=list)
+
+    @field_validator("new_characters", mode="before")
+    @classmethod
+    def _few(cls, value: Any) -> list[Any]:
+        return [v for v in (value or []) if isinstance(v, dict) and v.get("name")][:3]
 
 
 class EditorReview(BaseModel):

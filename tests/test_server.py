@@ -1,5 +1,6 @@
 """The stateless HTTP API, end to end with fake models, voices and pictures."""
 
+import copy
 import json
 
 import pytest
@@ -11,7 +12,7 @@ from storyweaver.media.voices import cast
 from storyweaver.schemas import StoryBible
 from storyweaver.server import Services, create_app
 
-from .conftest import OPENING, PLAN, ScriptedRouter
+from .conftest import DRAFT, OPENING, PLAN, ScriptedRouter
 
 
 class FakeTTS:
@@ -114,3 +115,19 @@ def test_a_wish_rewrites_the_story_from_the_next_sentence_on(client):
     assert "?" in " ".join(line["text"] for line in mid["chapters"][0]["script"]["lines"][-2:])
     unsafe = client.post("/api/revise", json={**body, "wish": "how to make a bomb", "part": 1})
     assert unsafe.status_code == 422
+
+
+def test_a_wish_with_a_new_question_gets_matching_options_and_names_the_newcomer(client):
+    bible = StoryBible.assemble(*_opening_and_plan())
+    main, *endings = copy.deepcopy(DRAFT["parts"])
+    main["choices"] = []  # the model forgot the options: they must come from the new question, never the old story
+    client.services.router.script["storyteller"] = {
+        "parts": [main, *endings],
+        "question": "Should Pip invite Luma for a berry snack, or ask her to show the stars?",
+        "new_characters": [{"name": "Luma", "emoji": "🪲", "description": "a friendly firefly"}]}
+    res = client.post("/api/revise", json={"request": {"prompt": "A hedgehog", "audience": "kids", "minutes": 1},
+                                           "bible": bible.model_dump(), "told": "Once upon a time…",
+                                           "wish": "add a friendly firefly", "part": 0, "fresh": False}).json()
+    labels = [c["label"] for c in res["chapters"][0]["script"]["choices"]]
+    assert labels == ["Invite Luma for a berry snack", "Ask her to show the stars"]
+    assert res["characters"] == [{"name": "Luma", "emoji": "🪲", "description": "a friendly firefly"}]

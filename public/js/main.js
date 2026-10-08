@@ -5,6 +5,7 @@ import { Score } from "./audio/score.js";
 import { Soundscape } from "./audio/soundscape.js";
 import { Director, GREETINGS } from "./director.js";
 import { renderHowItWorks } from "./howitworks.js";
+import { startLoom, startSpine } from "./loom.js";
 import { PushToTalk } from "./ptt.js";
 import { startStars } from "./stars.js";
 import * as ui from "./ui.js";
@@ -20,6 +21,12 @@ const S = { audience: "family", minutes: "2", config: null, health: null, device
 // ------------------------------------------------------------------------------------------------ boot
 async function boot() {
   startStars($("#stars"));
+  S.loom = startLoom($("#loom"), $("#shuttle"));
+  S.spine = startSpine($("#story-form"), $("#spine"), [...document.querySelectorAll("#story-form [data-step]")], () => {
+    const idea = $("#prompt").value.trim().length >= 2; // with an idea, the thread runs through every step to "Weave"
+    return [idea, idea, idea, idea && !$("#begin").disabled];
+  });
+  $("#prompt").addEventListener("input", () => { S.spine.update(); S.loom.boost(); });
   bindOptions("#audience", "audience", "family");
   bindOptions("#length", "minutes", "2", updateLengthNote);
   document.querySelectorAll("[data-open]").forEach((b) => b.addEventListener("click", () => openModal(b.dataset.open)));
@@ -37,7 +44,7 @@ async function boot() {
     return;
   }
   $("#examples").innerHTML = S.config.examples.map((e) => `<button type="button" class="chip" data-text="${ui.esc(e.text)}">${e.emoji} ${ui.esc(e.text)}</button>`).join("");
-  document.querySelectorAll("#examples .chip").forEach((c) => c.addEventListener("click", () => { $("#prompt").value = c.dataset.text; $("#prompt").focus(); }));
+  document.querySelectorAll("#examples .chip").forEach((c) => c.addEventListener("click", () => setIdea(c.dataset.text)));
   for (const l of S.config.lengths) LENGTH_NOTES[l.minutes] = l;
   updateLengthNote();
   updateVoiceNote();
@@ -48,6 +55,7 @@ async function boot() {
     <span>${ok(true)} Voices: ${S.devices.length} on this device${h.voices.neural?.available ? " · neural" : ""}${h.voices.studio.available ? " · studio" : ""}</span>
     <span>${ok(h.voice_input)} Voice input</span>`;
   $("#begin").disabled = !h.ok; // enabled only once everything is ready (an early click would do nothing)
+  S.spine.update();
   renderHowItWorks();
   warmGreetings();
   rotatePlaceholder();
@@ -107,8 +115,14 @@ function surprise() {
   const ideas = ["A cloud who wants to learn how to rain", "A tiny robot who repairs broken dreams", "The penguin who wanted to fly to the moon",
     "A library where the books whisper at night", "A grandmother who knits maps of places that don't exist yet", "A snail who enters the great forest race",
     "A lost star who lands in a fishing village", "The lighthouse that learned to sing"];
-  $("#prompt").value = ideas[Math.floor(Math.random() * ideas.length)];
+  setIdea(ideas[Math.floor(Math.random() * ideas.length)]);
+}
+
+function setIdea(text) {
+  $("#prompt").value = text;
   $("#prompt").focus();
+  S.spine?.update();
+  S.loom?.boost(1200);
 }
 
 function openModal(id) { $(`#${id}`).hidden = false; document.body.classList.add("modal-open"); }
@@ -254,7 +268,7 @@ function bindStartMic() {
     onAudio: async (blob) => {
       try {
         const res = await listen(blob, {});
-        if (res.transcript) $("#prompt").value = res.transcript.replace(/^(please\s+)?(tell me|i want|can you tell me)?\s*(a\s+)?(story|tale)\s+(about\s+)?/i, "").replace(/[.?!]+$/, "");
+        if (res.transcript) setIdea(res.transcript.replace(/^(please\s+)?(tell me|i want|can you tell me)?\s*(a\s+)?(story|tale)\s+(about\s+)?/i, "").replace(/[.?!]+$/, ""));
       } catch (err) { ui.toast(`Voice input failed: ${err.message}`, "warn"); }
     },
   });

@@ -41,13 +41,12 @@ async def test_the_question_is_spoken_and_the_picture_budget_kept(router):
     assert len(first.shots) == shape_for(3).shots_for(0) and all(len(b.shots) == 1 for b in state["branches"].values())
 
 
-async def test_one_minute_story_has_no_choice(settings):
-    draft = copy.deepcopy(DRAFT)
-    draft["parts"] = [draft["parts"][1]]
-    router = ScriptedRouter(settings, {"storyteller": draft})
+async def test_one_minute_story_still_has_a_choice(router):
     state, _ = await plan(router, minutes=1)
-    assert len(state["bible"].chapters) == 1 and not state["scripts"][0].choices and not state["branches"]
-    assert not state["scripts"][0].shots  # one minute = the opening's picture only
+    assert len(state["bible"].chapters) == 2 and [c.keyword for c in state["scripts"][0].choices] == ["glow", "mo"]
+    assert set(state["branches"]) == {"glow", "mo"}
+    # one minute = the opening's picture only
+    assert not state["scripts"][0].shots and not any(b.shots for b in state["branches"].values())
 
 
 async def test_softened_request_is_retold_from_the_safe_version(settings):

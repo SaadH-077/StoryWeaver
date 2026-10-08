@@ -7,12 +7,13 @@ import pytest
 
 from storyweaver import llm, readability
 from storyweaver.agents.interpreter import as_wish
+from storyweaver.agents.storyteller import ask_aloud, options_in
 from storyweaver.llm import LLMRouter, describe_error, extract_json, retry_after
 from storyweaver.media import picture_shelf
 from storyweaver.media.images import ImageError, ImageService
 from storyweaver.planner import shape_for
 from storyweaver.safety import lexicon
-from storyweaver.schemas import EditorReview, ScriptLine, StoryRequest
+from storyweaver.schemas import ChapterScript, EditorReview, ScriptLine, StoryRemainder, StoryRequest
 
 
 @pytest.mark.parametrize("text", ["how to make a bomb", "a story with s e x scenes", "a st0ry ab0ut p0rn",
@@ -39,7 +40,34 @@ def test_planner_fits_the_minutes_with_one_picture_per_minute(minutes):
     assert minutes <= shape.total_words / 150 <= minutes * 1.3
     assert shape.pictures == minutes  # a fixed picture budget that fits the free tiers
     assert shape.chapters not in shape.choice_after  # the last chapter never asks
-    assert bool(shape.choice_after) == (minutes > 1)  # a one-minute tale is just told
+    assert shape.choice_after == [1]  # every story, even a one-minute tale, has a moment to decide
+
+
+def test_a_wish_names_who_joins_the_story_with_a_clean_emoji():
+    part = {"title": "t", "summary": "s", "lines": ["One.", "Two.", "Three."]}
+    out = StoryRemainder.model_validate({"parts": [part], "new_characters": [
+        {"name": "Flick", "emoji": "firefly 🪲!", "description": "a friendly firefly"}, {"emoji": "🦉"}, "Owl"]})
+    assert [(c.name, c.emoji) for c in out.new_characters] == [("Flick", "🪲")]
+
+
+@pytest.mark.parametrize(("question", "options"), [
+    ("Should Pip follow the little light, or wake up Mo?", ["Follow the little light", "Wake up Mo"]),
+    ("What should Elsa do: open the door, or knock first?", ["Open the door", "Knock first"]),
+    ("What should happen next?", []),
+])
+def test_the_options_a_spoken_question_names(question, options):
+    assert options_in(question) == options
+
+
+def test_the_spoken_question_always_names_the_options_on_the_cards():
+    script = ChapterScript.model_validate({"title": "t", "summary": "s", "lines": [
+        "Pip met Flick.", "Flick glowed.", "It was dark.", "Should Pip go outside? Or hide under his bed?"],
+        "choices": [{"keyword": "light", "label": "Turn on the light"},
+                    {"keyword": "opal", "label": "Listen to Opal"}]})
+    asked = ask_aloud(script, "Pip")
+    assert asked == "What should Pip do: turn on the light, or listen to Opal?" == script.lines[-1].text
+    assert len(script.lines) == 4  # the mismatched question was replaced, not added to
+    assert ask_aloud(script, "Pip") == asked and len(script.lines) == 4  # a matching question is kept as it is
 
 
 def test_readability_orders_simple_before_complex():

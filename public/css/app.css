@@ -80,6 +80,32 @@ body[data-view="home"] #home, body[data-view="stage"] #stage { display: block; }
 
 /* ----------------------------------------------------------------------------------------------------- home */
 #home { overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
+/* the loom: a tapestry woven row by row at the edges of the screen (see loom.js) */
+#loom { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; transition: opacity 2.4s var(--ease); }
+.shuttle { position: fixed; left: 0; top: 0; z-index: 1; width: 28px; height: 8px; border-radius: 4px 12px 12px 4px; opacity: 0;
+  pointer-events: none; will-change: transform; background: linear-gradient(90deg, #7a4f26, var(--gold) 55%, #fff3d6);
+  box-shadow: 0 0 16px 3px rgba(247, 200, 115, .5); }
+/* a golden thread sews itself under the headline */
+.hero-thread { display: block; width: min(500px, 78%); height: auto; margin: -6px auto 12px; overflow: visible; }
+.ht-stitch { fill: none; stroke: url(#ht-g); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 11 8; }
+.ht-reveal { fill: none; stroke: #fff; stroke-width: 14; stroke-dasharray: 660; stroke-dashoffset: 660;
+  animation: sew 2.8s cubic-bezier(.25, .7, .3, 1) forwards; }
+@keyframes sew { to { stroke-dashoffset: 0; } }
+.ht-needle ellipse { fill: #fff6df; stroke: var(--gold); stroke-width: 1; }
+.ht-needle { animation: fade-out .7s ease 2.9s forwards; }
+@keyframes fade-out { to { opacity: 0; } }
+/* the story form is one thread: two strands twist through a knot at each step, in gold as far as it is ready */
+#story-form { position: relative; padding-left: 52px; }
+.spine { position: absolute; left: 0; top: 0; width: 40px; overflow: visible; pointer-events: none; }
+.spine .sp-base { fill: none; stroke: rgba(255, 255, 255, .13); stroke-width: 2; stroke-dasharray: 4 6; }
+.spine .sp-lit { fill: none; stroke-width: 2.6; stroke-linecap: round; transition: stroke-dashoffset 1.8s var(--ease); }
+.spine .sp-lit.s0 { stroke: var(--gold); }
+.spine .sp-lit.s1 { stroke: var(--violet); }
+.sp-knot circle { fill: #15122b; stroke: rgba(255, 255, 255, .22); stroke-width: 1.5; transition: fill .6s var(--ease), stroke .6s var(--ease); }
+.sp-knot text { font-family: var(--serif); font-size: 9.5px; font-weight: 600; fill: var(--muted); text-anchor: middle; transition: fill .6s; }
+.sp-knot.tied circle { fill: #2b2140; stroke: var(--gold); }
+.sp-knot.tied text { fill: var(--gold-2); }
+#story-form.woven .cta { box-shadow: 0 20px 60px -10px rgba(247, 200, 115, .9), 0 0 0 6px rgba(247, 200, 115, .12); }
 .home-wrap { position: relative; z-index: 2; width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 12px 0 70px; }
 .hero { text-align: center; margin: clamp(10px, 4vh, 44px) 0 34px; }
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; font-size: 12.5px;
@@ -97,7 +123,8 @@ body[data-view="home"] #home, body[data-view="stage"] #stage { display: block; }
   background: linear-gradient(120deg, rgba(247, 200, 115, .55), rgba(161, 132, 255, .45), rgba(98, 227, 210, .4));
   box-shadow: 0 30px 90px -30px rgba(161, 132, 255, .55); }
 .composer-inner { display: flex; align-items: center; gap: 12px; border-radius: calc(var(--radius-lg) - 2px);
-  background: rgba(13, 11, 28, .92); padding: 10px 10px 10px 22px; backdrop-filter: blur(20px); }
+  background: rgba(13, 11, 28, .92); padding: 10px 10px 10px 22px; backdrop-filter: blur(20px);
+  outline: 1.5px dashed rgba(247, 200, 115, .2); outline-offset: -6px; } /* stitched, like embroidery */
 .composer .spark { width: 22px; height: 22px; color: var(--gold); flex: none; }
 #prompt { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-family: var(--serif); font-size: clamp(18px, 2vw, 22px);
   padding: 14px 0; color: var(--text); }
@@ -115,6 +142,8 @@ body[data-view="home"] #home, body[data-view="stage"] #stage { display: block; }
 .settings { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; margin-top: 30px; }
 .card { position: relative; border-radius: var(--radius); background: linear-gradient(180deg, rgba(34,29,68,.56), rgba(17,15,36,.5));
   border: 1px solid var(--line); padding: 20px; }
+.card::before { content: ""; position: absolute; inset: 6px; border-radius: 15px; border: 1.5px dashed rgba(247, 200, 115, .12);
+  pointer-events: none; }
 .card h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font-size: 13px; font-weight: 600;
   letter-spacing: 1.3px; text-transform: uppercase; color: var(--muted); }
 .card .hint { margin: 0 0 14px; font-size: 13.5px; color: var(--text-2); line-height: 1.5; }
@@ -172,7 +201,7 @@ body[data-view="home"] #home, body[data-view="stage"] #stage { display: block; }
 .status-line .warn { color: var(--danger); }
 
 .facts-strip { margin-top: 46px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-.fact { padding: 16px; border-radius: 18px; background: rgba(255,255,255,.03); border: 1px solid var(--line); }
+.fact { padding: 16px; border-radius: 18px; background: rgba(13,11,28,.55); border: 1px dashed rgba(247, 200, 115, .2); }
 .fact b { display: block; font-family: var(--serif); font-size: 26px; font-weight: 600; color: var(--gold-2); }
 .fact span { font-size: 13px; color: var(--text-2); line-height: 1.45; }
 
@@ -263,13 +292,26 @@ body[data-view="home"] #home, body[data-view="stage"] #stage { display: block; }
 .line-text .w { opacity: .35; transition: opacity .2s; }
 .line-text .w.on { opacity: 1; }
 body.no-captions .caption { display: none; }
+#stage:has(#choices:not([hidden])) .caption { opacity: 0; } /* the question is on the choice screen itself */
 
-.cast-strip { position: absolute; right: clamp(16px, 3vw, 32px); top: 88px; z-index: 6; display: flex; flex-direction: column; gap: 10px; }
-.cast-strip .cast-face { position: relative; width: 54px; height: 54px; border-radius: 18px; overflow: hidden; border: 2px solid var(--line-2);
-  background: var(--glass-2); transition: all .35s var(--spring); opacity: .72; }
-.cast-strip .cast-face img { width: 100%; height: 100%; object-fit: cover; }
-.cast-strip .cast-face.speaking { opacity: 1; transform: scale(1.12); border-color: var(--spk, var(--gold)); box-shadow: 0 0 24px -2px var(--spk, var(--gold)); }
-.cast-strip .cast-face span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; }
+/* the characters of the story, on the right — newcomers from a spoken wish are sewn in as they arrive */
+.cast-strip { position: absolute; right: clamp(16px, 3vw, 32px); top: 88px; z-index: 6; width: 220px; display: flex; flex-direction: column; gap: 9px; }
+.cast-strip:empty { display: none; }
+.cast-head { margin: 0 0 1px 4px; font-size: 11px; font-weight: 600; letter-spacing: 2.2px; text-transform: uppercase; color: var(--text-2);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, .9); }
+.cast-face { position: relative; display: flex; align-items: center; gap: 10px; padding: 7px 12px 7px 7px; border-radius: 16px;
+  background: rgba(9, 8, 20, .66); border: 1px solid var(--line); opacity: .82; transition: transform .35s var(--spring), opacity .35s, border-color .35s, box-shadow .35s; }
+.cast-face .cf-ava { position: relative; width: 38px; height: 38px; flex: none; border-radius: 12px; overflow: hidden; display: grid; place-items: center;
+  font-size: 21px; font-weight: 650; background: var(--glass-2); border: 2px solid var(--spk, var(--line-2)); color: var(--spk, var(--text)); }
+.cast-face .cf-ava img { width: 100%; height: 100%; object-fit: cover; }
+.cast-face .cf-text { min-width: 0; }
+.cast-face .cf-name { font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cast-face .cf-role { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cast-face.speaking { opacity: 1; transform: translateX(-6px) scale(1.03); border-color: var(--spk, var(--gold)); box-shadow: 0 0 24px -6px var(--spk, var(--gold)); }
+.cast-face.new { opacity: 1; border: 1.5px dashed rgba(247, 200, 115, .65); animation: sew-in 1s var(--spring) both; }
+.cast-face .cf-tag { position: absolute; top: -9px; right: 10px; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .4px; color: #1f1405; background: linear-gradient(110deg, #ffe0a3, var(--gold)); box-shadow: 0 4px 14px -4px rgba(247, 200, 115, .8); }
+@keyframes sew-in { 0% { opacity: 0; transform: translateX(46px) scale(.9); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
 
 .dock { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; padding: 0 clamp(16px, 3vw, 32px) 20px; }
 .timeline { display: flex; gap: 6px; align-items: center; margin-bottom: 14px; }
@@ -306,7 +348,6 @@ body.paused .i-pause, body:not(.paused) .i-play { display: none; }
 .choice-card .cc-key { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase;
   padding: 5px 10px; border-radius: 999px; background: rgba(247,200,115,.18); color: var(--gold-2); border: 1px solid rgba(247,200,115,.4); }
 .choice-card .cc-label { font-family: var(--serif); font-size: 23px; font-weight: 600; margin-top: 10px; line-height: 1.25; }
-.choice-card .cc-ready { font-size: 12px; color: var(--teal); margin-top: 6px; }
 .choice-card.picked { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(98,227,210,.2); }
 .choice-foot { margin-top: 18px; display: flex; gap: 12px; align-items: center; justify-content: center; color: var(--text-2); font-size: 14px; }
 .countdown { width: 30px; height: 30px; transform: rotate(-90deg); }
@@ -421,12 +462,19 @@ body.modal-open .view { visibility: hidden; } /* nothing renders behind an open 
   .crew-row { grid-template-columns: repeat(2, 1fr); }
   .crew-chip:nth-child(n+7) { display: none; }
   .end-inner { grid-template-columns: 1fr; }
-  .cast-strip { display: none; }
+  .cast-strip { width: auto; gap: 8px; }
+  .cast-head, .cast-face .cf-text { display: none; }
+  .cast-face { padding: 4px; border-radius: 14px; }
+  .cast-face .cf-tag { top: -7px; right: -6px; padding: 1px 5px; font-size: 9px; }
   .mix { display: none; }
 }
 @media (max-width: 560px) {
   .options.three, .options.four { grid-template-columns: repeat(2, 1fr); }
   .caption { bottom: 120px; }
+  #story-form { padding-left: 0; }
+  .spine { display: none; }
+  .cast-strip { top: 76px; }
+  .cast-face .cf-ava { width: 32px; height: 32px; font-size: 17px; border-radius: 10px; }
   .nav .pill-btn span { display: none; }
   .stage-top { gap: 10px; }
   .stage-top .pill-btn { padding: 11px 12px; }

@@ -1,7 +1,8 @@
 """Duration planning: turn "I have 2 minutes" into a story shape.
 
-The listener picks a length in minutes; this module decides how many chapters, words, choices and pictures fit,
-and which beat of the story each chapter carries. The beats combine three classic structures:
+The listener picks a length in minutes; this module decides how many chapters, words and pictures fit, and which
+beat of the story each chapter carries. Every story — even a one-minute tale — has a moment where the listener decides
+what happens next. The beats combine three classic structures:
 
 * the **Story Spine** (Kenn Adams): Once upon a time… Every day… But one day… Because of that… Until finally…
   And ever since then… — it forces cause and effect, which is what makes a story easy to follow;
@@ -64,8 +65,8 @@ class StoryShape:
 _SHAPES: dict[int, tuple[int, int, list[tuple[str, str, float, bool, int]]]] = {
     # (opening words, words per chapter, chapters). Story time ≈ words / 150 per minute; targets sit a little
     # above the exact duration because writers reliably undershoot (measured in the evaluation).
-    1: (50, 135, [("But one day… / Because of that… / Until finally… / And ever since then…", "climax", 0.5,
-                   False, 0)]),
+    1: (40, 62, [("But one day… / Because of that…", "rising_action", 0.45, True, 0),
+                 ("Until finally… / And ever since then…", "resolution", 0.55, False, 0)]),
     2: (60, 155, [("But one day… / Because of that…", "rising_action", 0.45, True, 0),
                   ("Until finally… / And ever since then…", "resolution", 0.6, False, 1)]),
     3: (75, 240, [("But one day… / Because of that…", "rising_action", 0.45, True, 1),
@@ -79,7 +80,7 @@ def shape_for(minutes: int, audience: str = "family") -> StoryShape:
     if audience == "kids":  # little ones: same time, slower and simpler — a few words fewer per chapter
         per_chapter = int(per_chapter * 0.92)
     words_per_line = 12 if audience == "kids" else 14
-    lines = max(6, per_chapter // words_per_line)
+    lines = max(4, per_chapter // words_per_line)
     slots = [ChapterSlot(*beat) for beat in beats]
     return StoryShape(minutes, opening, per_chapter, (lines, lines + 4), slots)
 

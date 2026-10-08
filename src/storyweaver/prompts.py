@@ -136,7 +136,8 @@ ALSO WRITE
   style for the whole story), "narrator" (gender, accent american/british, style), "opening_music",
   "opening_ambience".
 - "characters": the hero FIRST (same name and look), then 1-2 others with distinct personalities; ids are short
-  lowercase single words; each has "name", "role", "description", "look", "gender", "age", "accent".
+  lowercase single words; each has "name", "role", "description", "look", "gender", "age", "accent" and "emoji"
+  (one emoji that shows who they are, e.g. "🦔").
 
 {{audience_rules}}
 
@@ -165,7 +166,9 @@ STORY SO FAR
 STRUCTURE OF THE PARTS TO WRITE
 {structure}
 
-Return only JSON: {{"parts": [...]}} with parts in the same format as before."""
+Return only JSON: {{"parts": [...], "new_characters": [...]}} with parts in the same format as before, and in
+"new_characters" everyone the wish brings into the story ("name", "emoji", "description" of a few words) — [] if no
+one new appears."""
 # ------------------------------------------------------------------------------------------------------
 WRITER_SYSTEM = f"""You are the Writer of StoryWeaver. Write ONE chapter of a story that is read aloud, as a script of
 lines for the narrator and the characters.

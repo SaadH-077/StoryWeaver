@@ -1,0 +1,25 @@
+{
+  "when": "2026-10-08 11:21",
+  "highlights": [
+    [
+      "100%",
+      "of 49 harmful requests stopped (JailbreakBench, XSTest, our own children's red-team)"
+    ],
+    [
+      "78%",
+      "of 40 safe-but-scary-sounding requests still told — 0 wrongly blocked by the lexicon"
+    ],
+    [
+      "75%",
+      "of finished stories that humans judged unsuitable for children were caught by the output checks (Kahaani)"
+    ],
+    [
+      "0.4",
+      "reading grade of stories for little ones (target ≤ 4; TinyStories 2.82)"
+    ],
+    [
+      "3.9 s",
+      "median time until the whole story is written and checked"
+    ]
+  ]
+}

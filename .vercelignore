@@ -1,0 +1,10 @@
+.venv
+models
+runtime
+tests
+eval
+docs
+scripts
+*.log
+.env
+demo

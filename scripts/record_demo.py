@@ -397,7 +397,7 @@ async def run(args) -> int:
     out.parent.mkdir(exist_ok=True)
     subprocess.run([ffmpeg, "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(concat), *inputs,
                     "-filter_complex", graph, "-map", "0:v", "-map", "[a]", "-vf", "fps=25,format=yuv420p",
-                    "-c:v", "libx264", "-preset", "slow", "-crf", "27", "-c:a", "aac", "-b:a", "128k",
+                    "-c:v", "libx264", "-preset", "slow", "-crf", "33", "-c:a", "aac", "-b:a", "96k",
                     "-t", f"{t_end - first:.2f}", "-movflags", "+faststart", str(out)], check=True)
     print(f"wrote {out.relative_to(ROOT)} ({out.stat().st_size / 1e6:.1f} MB, {t_end - first:.0f} s)")
 

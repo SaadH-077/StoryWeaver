@@ -16,19 +16,19 @@ reliably on **free model tiers**.
 | **Safe** | 4 safety layers, starting with rules no model can be talked out of |
 | **0 €** | Groq, Gemini and Cloudflare free tiers, open models and the browser's own voices |
 
+**▶ Try it live: [storyweaver-virid.vercel.app](https://storyweaver-virid.vercel.app)** — runs on free model tiers
+(if they are busy, StoryWeaver tells one of its own stories rather than fail).
+
 ### ▶ Demo — with sound
 
 <video src="demo/storyweaver_demo.mp4" controls width="100%" poster="docs/images/weaving.jpg"></video>
+
+[![StoryWeaver demo: click to watch the full video with sound](docs/images/demo.gif)](demo/storyweaver_demo.mp4)
 
 **[▶ Watch the demo (MP4, with sound) — `demo/storyweaver_demo.mp4`](demo/storyweaver_demo.mp4)** · about 6 minutes,
 recorded end to end by `scripts/record_demo.py` (no editing): a tour of the options, then **three requests** — a
 2-minute story for little ones with a **spoken wish** and a **choice**, a 1-minute story for grown-ups with a look
 inside the agent crew, and an unsuitable request that is kindly refused — and finally the in-app explanation.
-
-<details><summary>A silent preview, for viewers that can't play the video inline</summary>
-
-[![StoryWeaver demo preview](docs/images/demo.gif)](demo/storyweaver_demo.mp4)
-</details>
 
 A walk-through of every screen is in [A tour, screen by screen](#a-tour-screen-by-screen); how the agents work
 together is in [Architecture: the agent system](#architecture-the-agent-system).
@@ -55,7 +55,7 @@ together is in [Architecture: the agent system](#architecture-the-agent-system).
 brings their own, in a local `.env` file (never committed) or as environment variables.
 
 ```bash
-git clone https://github.com/<your-account>/StoryWeaver.git && cd StoryWeaver
+git clone https://github.com/SaadH-077/StoryWeaver.git && cd StoryWeaver
 uv sync --extra dev            # or: python -m venv .venv && .venv/bin/pip install -e ".[dev]"
 cp .env.example .env           # Windows: copy .env.example .env — then paste your keys into .env
 uv run storyweaver             # opens http://localhost:8000

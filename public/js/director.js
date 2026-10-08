@@ -3,6 +3,7 @@
 // story from the next sentence on, in the background; if that fails, the story simply continues as it was.
 import { postJSON, streamNDJSON } from "./api.js";
 import { themeFor } from "./audio/score.js";
+import { keepPicture, saveBook } from "./storybook.js";
 import * as ui from "./ui.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -81,6 +82,28 @@ export class Director {
     this.current = -1;
     this.segment = 0;
     this.kick = null;
+    // the story as it is told — lines, pictures, choices, wishes — for the Storybook
+    this.book = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, created: Date.now(), title: "",
+      audience: request.audience, minutes: request.minutes, prompt: request.prompt, flow: [], cast: [], wishes: [] };
+    this.bookJobs = [];
+  }
+
+  /** A picture appears here in the story: kept (as a small JPEG) for the Storybook. */
+  bookPicture(promise) {
+    const entry = { type: "picture", src: "" };
+    this.book.flow.push(entry);
+    this.bookJobs.push(Promise.resolve(promise).then((url) => (url ? keepPicture(url) : ""))
+      .then((src) => { entry.src = src; }).catch(() => {}));
+  }
+
+  /** Put the story on the Storybook shelf (once finished, or when the listener leaves after it began). */
+  async keepBook(finished) {
+    if (this.bookSaved || !this.book.title || this.book.flow.filter((f) => f.type === "line").length < 3) return null;
+    this.bookSaved = true;
+    await Promise.race([Promise.allSettled(this.bookJobs), sleep(6000)]);
+    const book = { ...this.book, finished, choices: [...this.decisions], flow: this.book.flow.filter((f) => f.type !== "picture" || f.src) };
+    await saveBook(book).catch(() => {});
+    return book.id;
   }
 
   // ===================================================================================== lifecycle
@@ -115,6 +138,7 @@ export class Director {
   }
 
   stop() {
+    if (!this.finished) this.keepBook(false); // a story left part-way is kept too
     this.stopped = true;
     this.controller.abort(); // the story stream and any rewrite in flight
     if (this.engine.close) this.engine.close(); else this.engine.stop(); // pending voice requests
@@ -126,6 +150,26 @@ export class Director {
 
   async pause() { this.paused = true; this.engine.stop(); await this.mixer.suspend(); }
   async resume() { this.paused = false; await this.mixer.resume(); this.wake(); }
+
+  /** The listener is about to speak (or type): the story waits — narration, music and the choice countdown — so the
+   *  microphone hears only them. The interrupted sentence is spoken again when it resumes. */
+  async hold(text = "The story is waiting for you…") {
+    if (this.stopped) return;
+    ui.holdChoice(true);
+    document.body.classList.add("held");
+    ui.$("#hold-text").textContent = text;
+    if (this.held) return;
+    this.held = true;
+    if (!this.paused) { this.heldPause = true; await this.pause(); }
+  }
+
+  async release() {
+    if (!this.held) return;
+    this.held = false;
+    ui.holdChoice(false);
+    document.body.classList.remove("held");
+    if (this.heldPause) { this.heldPause = false; if (!this.stopped) await this.resume(); }
+  }
 
   enqueue(...items) { this.queue.push(...items); this.wake(); }
   wake() { if (this.kick) { const k = this.kick; this.kick = null; k(); } }
@@ -215,6 +259,7 @@ export class Director {
     this.scape.set(o.opening_ambience, 0.3);
     this.score.set(o.opening_music, 0.25);
     this.title = o.title;
+    Object.assign(this.book, { title: o.title, logline: o.logline });
     ui.crewChip("storyteller", "done", `“${o.title}”`);
     ui.setTitles(o.title, "Once upon a time…");
     const theme = themeFor(o.title, o.opening_music);
@@ -224,6 +269,7 @@ export class Director {
 
     // the establishing picture (one of the story's fixed budget of pictures: one per minute)
     this.opening = this.visuals.request("opening", this.visuals.sceneSpec(o.opening_shot, ["hero"], 0), 0);
+    this.bookPicture(this.opening);
     this.opening.then((url) => { if (url && this.segment === 0) this.visuals.show(url); this.cover = url; });
 
     ui.weavingProgress(1); // the whole story is here: the thread is complete
@@ -257,6 +303,8 @@ export class Director {
       `${id === "narrator" ? "Narrator" : ui.esc(this.characters.find((c) => c.id === id)?.name || id)} → <b>${ui.esc(this.engine.label(id) || "voice")}</b>`).join(" · "));
 
     ui.renderCast(this.characters, this.visuals.portraits);
+    this.book.cast = this.characters.map((c) => ({ name: c.name, emoji: c.emoji || "", role: c.role || "" }));
+    Object.assign(this.book, { title: bible.title, logline: bible.logline });
     this.visuals.onStat = (s) => this.note("illustrator", `${s.done} of ${this.plan.shape?.pictures ?? "?"} pictures painted (${Object.entries(s.providers).map(([k, v]) => `${v}× ${ui.esc(k)}`).join(", ")}), avg ${(s.ms.reduce((a, b) => a + b, 0) / Math.max(1, s.ms.length) / 1000).toFixed(1)} s each${s.failed ? `, ${s.failed} painted in the browser (no image model available)` : ""}. A fixed budget of one picture per minute keeps every story inside the free tiers; every character's look is written into each picture so they stay recognisable.`);
 
     if (plan.shelf) ui.toast("The free models are busy right now — so here is one of StoryWeaver's own stories.", "", 7000);
@@ -418,6 +466,7 @@ export class Director {
           ctl.close();
           this.pick = null;
           ui.toast(auto ? `The story chose: ${option.label}` : `You chose: ${option.label}`, "good");
+          this.book.flow.push({ type: "choice", text: option.label, auto });
           ui.logEvent("listener", "listener", `${auto ? "timeout →" : "chose"} “${option.label}”`, "", performance.now() - this.t0);
           resolve(option);
         });
@@ -441,6 +490,8 @@ export class Director {
     await this.speak({ kind: "host", speaker: "host", delivery: "warm", text: GOODBYES[this.request.audience](bible.title) });
     this.score.set("calm", 0.1);
     this.scape.set(["wind"], 0.1);
+    this.finished = true;
+    this.keepBook(true).then((id) => { if (id) { ui.$("#end-book").dataset.id = id; ui.$("#end-book").hidden = false; } });
     const minutes = (performance.now() - (this.storyStart || this.t0)) / 60000;
     const gaps = this.metrics.gaps.slice(1);
     ui.showEnd({
@@ -460,6 +511,7 @@ export class Director {
     if (intent.kind === "choice" && this.choiceOpen) return this.pick?.(intent.choice_keyword);
     if (intent.kind === "steer" && intent.steer) return this.wish(intent.steer);
     if (intent.kind === "question" && intent.answer) {
+      this.book.flow.push({ type: "qa", q: text, a: intent.answer });
       this.queue.unshift({ kind: "aside", speaker: "narrator", delivery: "warm", text: intent.answer });
       return this.wake();
     }
@@ -513,6 +565,8 @@ export class Director {
         }
       }
       this.welcome(res.characters, steer, parts);
+      this.book.flow.push({ type: "wish", text: steer });
+      this.book.wishes.push(steer);
       ui.toast("✓ The story now follows your wish.", "good");
       ui.logEvent("agent", "storyteller", "✓ wish woven in — the story continues with it", "", performance.now() - this.t0);
       this.note("storyteller", `${this.notesFor("storyteller")}<br>Wish “${ui.esc(steer)}” woven in from the next sentence on.`);
@@ -545,6 +599,7 @@ export class Director {
       const id = `wish-${c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
       if (this.characters?.some((k) => k.name.toLowerCase() === c.name.toLowerCase())) continue;
       if (!ui.addToCast({ id, name: c.name, emoji: c.emoji || "✨", role: c.description || "From your wish", description: c.description })) continue;
+      this.book.cast.push({ name: c.name, emoji: c.emoji || "✨", role: c.description || "", fromWish: true });
       ui.logEvent("agent", "storyteller", `+ ${c.name} joins the story`, c.description || "", performance.now() - this.t0);
       this.note("casting", `${this.notesFor("casting")}<br><b>${ui.esc(c.name)}</b> joined from your wish (voiced through the narrator).`);
     }
@@ -585,8 +640,12 @@ export class Director {
   }
 
   async typed(text) {
-    const intent = await postJSON("/api/interpret", { text, ...this.context() });
-    return this.heard(text, intent);
+    try {
+      const intent = await postJSON("/api/interpret", { text, ...this.context() });
+      return await this.heard(text, intent);
+    } catch (err) {
+      ui.toast(`I couldn't read that just now (${err.message}).`, "warn");
+    }
   }
 
   // ===================================================================================== playback
@@ -619,7 +678,7 @@ export class Director {
       this.storyStart = performance.now();
     }
     if (item.segment !== undefined) ui.setProgress(item.segment, (item.i + 1) / Math.max(1, item.of), this.timeText());
-    if (item.kind === "line") { this.toldLines.push(item.text); this.lastLine = item; }
+    if (item.kind === "line") this.lastLine = item;
     this.mixer.duck(true);
     let raf = null;
     const startedAt = performance.now();
@@ -635,6 +694,11 @@ export class Director {
     this.mixer.duck(false);
     ui.highlightFraction(spans, 1);
     if (this.paused && !this.stopped) { this.queue.unshift(item); return; } // replay the interrupted line on resume
+    if (item.kind === "line" && !this.stopped) { // told to the end: it counts for wishes and goes into the Storybook
+      this.toldLines.push(item.text);
+      if (item.shot) this.bookPicture(this.visuals.cache.get(item.shot));
+      this.book.flow.push({ type: "line", speaker: item.speaker, name, text: item.text });
+    }
     this.updateNumbers();
     await sleep(item.kind === "line" ? 260 : 420);
   }

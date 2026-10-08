@@ -70,10 +70,58 @@ export function diagram() {
   </svg>`;
 }
 
+const KIND = { agent: "LLM agent", safety: "Safety", code: "Plain code", media: "Performer" };
+
+/** Meet the crew, on a stage: the curtains part, and each member steps into the spotlight in turn — then the whole
+ *  line-up takes a bow. Starts when the stage scrolls into view; anyone can be called back with a tap. */
+function theatre() {
+  const root = $("#hiw-crew");
+  root.innerHTML = `<div class="th-valance"></div>
+    <div class="th-stage"><div class="th-spot"></div><div class="th-pool"></div>
+      <div class="th-feature" id="th-feature" aria-live="polite"></div>
+      <div class="th-lineup">${CREW.map((c, i) => `<button class="th-actor" data-i="${i}" style="--i:${i}"><span class="ai">${c.icon}</span>${esc(c.name)}</button>`).join("")}</div>
+    </div>
+    <div class="th-curtain l"></div><div class="th-curtain r"></div>
+    <button class="th-replay" type="button">↺ Raise the curtain again</button>`;
+  const actors = [...root.querySelectorAll(".th-actor")];
+  let timers = [];
+  const feature = (i, kicker = "Now introducing") => {
+    const c = CREW[i];
+    const box = $("#th-feature");
+    box.classList.remove("swap");
+    void box.offsetWidth; // restart the entrance
+    box.innerHTML = `<div class="th-kicker">${esc(kicker)}</div><div class="th-ico">${c.icon}</div><h4>${esc(c.name)}</h4>
+      <div class="th-tags"><span>${esc(KIND[c.kind] || c.kind)}</span><span>${esc(c.model)}</span></div><p>${esc(c.role)}</p>`;
+    box.classList.add("swap");
+    actors.forEach((a, k) => a.classList.toggle("lit", k === i));
+  };
+  const show = () => {
+    timers.forEach(clearTimeout);
+    timers = [];
+    root.classList.remove("bow");
+    root.classList.add("open");
+    CREW.forEach((_, i) => timers.push(setTimeout(() => { actors[i].classList.add("on"); feature(i); }, 1300 + i * 1700)));
+    timers.push(setTimeout(() => { root.classList.add("bow"); feature(1, "Curtain call — the lead"); }, 1300 + CREW.length * 1700));
+  };
+  const reset = () => {
+    timers.forEach(clearTimeout);
+    root.classList.remove("open", "bow");
+    actors.forEach((a) => a.classList.remove("on", "lit"));
+    $("#th-feature").innerHTML = "";
+  };
+  actors.forEach((a) => a.addEventListener("click", () => {
+    timers.forEach(clearTimeout);
+    actors.forEach((x) => x.classList.add("on"));
+    feature(Number(a.dataset.i), "In the spotlight");
+  }));
+  root.querySelector(".th-replay").addEventListener("click", () => { reset(); setTimeout(show, 900); });
+  new IntersectionObserver((entries, observer) => {
+    if (entries.some((e) => e.isIntersecting)) { observer.disconnect(); show(); }
+  }, { threshold: 0.35 }).observe(root);
+}
+
 export async function renderHowItWorks() {
-  $("#hiw-crew").innerHTML = CREW.map((c) => `<div class="agent-card"><div class="a-ico">${c.icon}</div><div>
-      <div class="a-head"><span class="a-name">${esc(c.name)}</span><span class="a-model">${esc(c.model)}</span></div>
-      <div class="a-role">${esc(c.role)}</div></div></div>`).join("");
+  theatre();
   $("#hiw-diagram").innerHTML = diagram();
   $("#hiw-safety").innerHTML = SAFETY.map(([t, p, tr]) => `<div class="decision"><b>${esc(t)}</b><p>${esc(p)}</p><div class="tradeoff">${esc(tr)}</div></div>`).join("");
   $("#hiw-decisions").innerHTML = DECISIONS.map(([t, p, tr]) => `<div class="decision"><b>${esc(t)}</b><p>${esc(p)}</p><div class="tradeoff">${esc(tr)}</div></div>`).join("");

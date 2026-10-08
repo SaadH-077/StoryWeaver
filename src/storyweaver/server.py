@@ -62,6 +62,12 @@ EXAMPLES = [
     {"emoji": "🐉", "text": "A dragon who opens a bakery"},
     {"emoji": "🌙", "text": "The night the moon forgot to rise"},
     {"emoji": "🐱", "text": "A detective cat and the mystery of the missing socks"},
+    {"emoji": "☁️", "text": "A cloud who wants to learn how to rain"},
+    {"emoji": "🤖", "text": "A tiny robot who repairs broken dreams"},
+    {"emoji": "🐧", "text": "The penguin who wanted to fly to the moon"},
+    {"emoji": "📚", "text": "A library where the books whisper at night"},
+    {"emoji": "🐌", "text": "A snail who enters the great forest race"},
+    {"emoji": "⭐", "text": "A lost star who lands in a fishing village"},
 ]
 
 

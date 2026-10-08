@@ -5,9 +5,10 @@ import { Score } from "./audio/score.js";
 import { Soundscape } from "./audio/soundscape.js";
 import { Director, GREETINGS } from "./director.js";
 import { renderHowItWorks } from "./howitworks.js";
-import { startLoom, startSpine } from "./loom.js";
+import { startLoom, startSpine, startThreads } from "./loom.js";
 import { PushToTalk } from "./ptt.js";
 import { startStars } from "./stars.js";
+import { StorybookUI } from "./storybook.js";
 import * as ui from "./ui.js";
 import { chooseEngine, DeviceEngine, loadDeviceVoices, ServerEngine, SimEngine } from "./voices.js";
 import { Visuals } from "./visuals.js";
@@ -22,6 +23,7 @@ const S = { audience: "family", minutes: "2", config: null, health: null, device
 async function boot() {
   startStars($("#stars"));
   S.loom = startLoom($("#loom"), $("#shuttle"));
+  startThreads($("#threads"), $(".wordmark"));
   S.spine = startSpine($("#story-form"), $("#spine"), [...document.querySelectorAll("#story-form [data-step]")], () => {
     const idea = $("#prompt").value.trim().length >= 2; // with an idea, the thread runs through every step to "Weave"
     return [idea, idea, idea, idea && !$("#begin").disabled];
@@ -36,6 +38,8 @@ async function boot() {
   $("#engine").addEventListener("change", () => { updateVoiceNote(); warmGreetings(); });
   bindStageControls();
   bindStartMic();
+  S.storybook = new StorybookUI();
+  document.querySelectorAll("[data-open-book]").forEach((b) => b.addEventListener("click", () => S.storybook.show()));
   $("#hero").addEventListener("input", updateNamePreview);
   try {
     [S.config, S.health, S.devices] = await Promise.all([getJSON("/api/config"), getJSON("/api/health"), loadDeviceVoices()]);
@@ -43,8 +47,7 @@ async function boot() {
     $("#status-line").innerHTML = `<span class="warn">The StoryWeaver server isn't reachable (${ui.esc(err.message)}).</span>`;
     return;
   }
-  $("#examples").innerHTML = S.config.examples.map((e) => `<button type="button" class="chip" data-text="${ui.esc(e.text)}">${e.emoji} ${ui.esc(e.text)}</button>`).join("");
-  document.querySelectorAll("#examples .chip").forEach((c) => c.addEventListener("click", () => setIdea(c.dataset.text)));
+  renderIdeas(S.config.examples);
   for (const l of S.config.lengths) LENGTH_NOTES[l.minutes] = l;
   updateLengthNote();
   updateVoiceNote();
@@ -111,11 +114,20 @@ function rotatePlaceholder() {
   setInterval(() => { if (!$("#prompt").value) $("#prompt").placeholder = `A story about… ${ideas[i++ % ideas.length].toLowerCase()}`; }, 3500);
 }
 
+/** Story ideas drift past in two rows (each row twice over, so the loop is seamless); tap one to use it. */
+function renderIdeas(examples) {
+  const chip = (e, copy) => `<button type="button" class="idea"${copy ? ' aria-hidden="true" tabindex="-1"' : ""} data-text="${ui.esc(e.text)}"><span class="e">${e.emoji}</span>${ui.esc(e.text)}</button>`;
+  const half = Math.ceil(examples.length / 2);
+  [["#ideas-a", examples.slice(0, half)], ["#ideas-b", examples.slice(half)]].forEach(([track, list]) => {
+    const row = list.length < 5 ? [...list, ...list] : list; // long enough to fill a wide screen
+    $(track).innerHTML = row.map((e, i) => chip(e, i >= list.length)).join("") + row.map((e) => chip(e, true)).join("");
+  });
+  document.querySelectorAll("#examples .idea").forEach((c) => c.addEventListener("click", () => setIdea(c.dataset.text)));
+}
+
 function surprise() {
-  const ideas = ["A cloud who wants to learn how to rain", "A tiny robot who repairs broken dreams", "The penguin who wanted to fly to the moon",
-    "A library where the books whisper at night", "A grandmother who knits maps of places that don't exist yet", "A snail who enters the great forest race",
-    "A lost star who lands in a fishing village", "The lighthouse that learned to sing"];
-  setIdea(ideas[Math.floor(Math.random() * ideas.length)]);
+  const ideas = (S.config?.examples || []).map((e) => e.text);
+  if (ideas.length) setIdea(ideas[Math.floor(Math.random() * ideas.length)]);
 }
 
 function setIdea(text) {
@@ -126,7 +138,10 @@ function setIdea(text) {
 }
 
 function openModal(id) { $(`#${id}`).hidden = false; document.body.classList.add("modal-open"); }
-function closeModal(id) { $(`#${id}`).hidden = true; document.body.classList.remove("modal-open"); }
+function closeModal(id) {
+  $(`#${id}`).hidden = true;
+  if (!document.querySelector(".modal:not([hidden])")) document.body.classList.remove("modal-open");
+}
 
 // ------------------------------------------------------------------------------------------------ story
 async function begin(promptOverride) {
@@ -164,7 +179,8 @@ async function begin(promptOverride) {
 }
 
 function resetStage() {
-  ["#endcard", "#refusal", "#choices"].forEach((s) => { $(s).hidden = true; });
+  ["#endcard", "#refusal", "#choices", "#typebar", "#end-book"].forEach((s) => { $(s).hidden = true; });
+  document.body.classList.remove("held");
   ui.hideCaption();
   ui.titleCard(false);
   ui.setTitles("StoryWeaver", "");
@@ -196,6 +212,8 @@ function bindStageControls() {
   $("#again-btn").addEventListener("click", () => goHome());
   $("#refusal-back").addEventListener("click", () => goHome());
   $("#end-crew").addEventListener("click", () => { ui.renderCrew(S.director?.did || {}, new Set()); ui.openDrawer("crew"); });
+  $("#end-book").addEventListener("click", (e) => S.storybook.show(e.currentTarget.dataset.id));
+  bindTyping();
   $("#crew-btn").addEventListener("click", () => {
     if ($("#drawer").hidden) { ui.renderCrew(S.director?.did || {}, S.director?.live || new Set()); ui.openDrawer(); }
     else ui.closeDrawer();
@@ -213,6 +231,8 @@ function bindStageControls() {
   const ptt = new PushToTalk({
     button: $("#ptt"),
     onState: (state) => {
+      if (state === "arming") S.director?.hold("Listening — the story waits for you…"); // silence before the mic opens
+      if (["denied", "unsupported", "too-short", "idle"].includes(state)) S.director?.release();
       $("#ptt").classList.toggle("rec", state === "recording");
       $("#ptt").classList.toggle("busy", state === "sending");
       $("#ptt-label").textContent = { recording: "Listening…", sending: "Thinking…" }[state] || "Hold to talk";
@@ -226,19 +246,54 @@ function bindStageControls() {
         if (res.transcript) await S.director?.heard(res.transcript, res.intent);
         else ui.toast("I didn't hear anything — hold the button while you speak.", "");
       } catch (err) { ui.toast(`Voice input failed: ${err.message}`, "warn"); }
-      finally { $("#ptt").classList.remove("busy"); $("#ptt-label").textContent = "Hold to talk"; }
+      finally {
+        $("#ptt").classList.remove("busy");
+        $("#ptt-label").textContent = "Hold to talk";
+        S.director?.release(); // the answer (or the host's reply to a wish) is first in line when the story resumes
+      }
     },
   });
   let spaceDown = false;
   addEventListener("keydown", (e) => {
     if (e.target.matches?.("input, textarea, select")) return;
-    if (e.key === "Escape") { closeModal("how"); ui.closeDrawer(); }
+    if (e.key === "Escape") { closeModal("how"); closeModal("storybook"); ui.closeDrawer(); }
     if (document.body.dataset.view !== "stage") return;
     if (e.code === "Space" && !spaceDown) { e.preventDefault(); spaceDown = true; ptt.start(); }
     if (e.key === "p" || e.key === "P") togglePause();
+    if (e.key === "t" || e.key === "T") { e.preventDefault(); openTyping(); }
     if (e.key === "c" || e.key === "C") document.body.classList.toggle("no-captions");
   });
   addEventListener("keyup", (e) => { if (e.code === "Space" && spaceDown) { e.preventDefault(); spaceDown = false; ptt.stop(); } });
+}
+
+/** Type instead of speaking: the story waits while the box is open; Enter sends, Escape (or ✕) continues. */
+function openTyping() {
+  if (!S.director || document.body.dataset.view !== "stage") return;
+  $("#typebar").hidden = false;
+  $("#type-input").focus();
+  S.director.hold("The story waits while you type…");
+}
+
+function closeTyping() {
+  $("#typebar").hidden = true;
+  $("#type-input").value = "";
+  S.director?.release();
+}
+
+function bindTyping() {
+  $("#type-btn").addEventListener("click", () => ($("#typebar").hidden ? openTyping() : closeTyping()));
+  $("#type-close").addEventListener("click", closeTyping);
+  $("#type-input").addEventListener("keydown", (e) => { if (e.key === "Escape") { e.stopPropagation(); closeTyping(); } });
+  $("#typebar").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = $("#type-input").value.trim();
+    if (!text || !S.director) return closeTyping();
+    $("#typebar").classList.add("busy");
+    try { await S.director.typed(text); } finally {
+      $("#typebar").classList.remove("busy");
+      closeTyping();
+    }
+  });
 }
 
 async function togglePause() {

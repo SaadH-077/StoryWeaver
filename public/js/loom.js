@@ -185,3 +185,97 @@ export function startSpine(form, svg, steps, isReady) {
   layout();
   return { update: () => update(false), layout };
 }
+
+/** Threads that flow in from both sides of the screen, gather into a bundle and run through the StoryWeaver
+ *  wordmark — as if the name is being woven from them — with a few bright beads (shuttles) travelling along them.
+ *  About twenty curves at ~30 fps on an unscaled canvas; it rests when the wordmark is out of sight. */
+export function startThreads(canvas, mark) {
+  const cx = canvas.getContext("2d");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const COLORS = ["247,200,115", "255,143,179", "161,132,255", "98,227,210", "130,200,255", "255,224,163"];
+  const N = 20;
+  const threads = Array.from({ length: N }, (_, i) => ({
+    color: COLORS[i % COLORS.length], phase: i * 1.7, speed: 0.18 + (i % 5) * 0.05, width: 0.9 + (i % 4) * 0.45,
+    alpha: 0.16 + (i % 3) * 0.08,
+  }));
+  const beads = Array.from({ length: 6 }, (_, i) => ({ thread: (i * 7) % N, s: i / 6, v: 0.0022 + (i % 3) * 0.0008 }));
+  let w = 0, h = 0, last = 0, t = 0;
+
+  const resize = () => { w = canvas.width = innerWidth; h = canvas.height = innerHeight; };
+  addEventListener("resize", resize);
+  resize();
+
+  // each thread: in from the left at one height, through the bundle in the word, out to the right at a mirrored height
+  function geometry(th, i, r) {
+    const mid = r.top + r.height * 0.56, half = r.width * 0.5;
+    const spread = r.height * 0.7;
+    const k = i / (N - 1);
+    const yl = h * (0.04 + 0.92 * k) + Math.sin(t * th.speed + th.phase) * 26;
+    const yr = h * (0.04 + 0.92 * k) + Math.cos(t * th.speed * 0.9 + th.phase) * 26;
+    const yc = mid + (k - 0.5) * spread + Math.sin(t * 0.5 + th.phase) * 4;
+    const a = r.left + half * 0.12, b = r.right - half * 0.12;
+    return [[-30, yl], [a * 0.42, yl], [a * 0.72, yc], [a, yc],
+      [b, yc], [b + (w - b) * 0.28, yc], [b + (w - b) * 0.58, yr], [w + 30, yr]];
+  }
+
+  const bez = (p0, p1, p2, p3, u) => {
+    const v = 1 - u;
+    return [v * v * v * p0[0] + 3 * v * v * u * p1[0] + 3 * v * u * u * p2[0] + u * u * u * p3[0],
+      v * v * v * p0[1] + 3 * v * v * u * p1[1] + 3 * v * u * u * p2[1] + u * u * u * p3[1]];
+  };
+  function pointAt(g, s) { // 0-0.4 the left curve, 0.4-0.6 through the word, 0.6-1 the right curve
+    if (s < 0.4) return bez(g[0], g[1], g[2], g[3], s / 0.4);
+    if (s < 0.6) { const u = (s - 0.4) / 0.2; return [g[3][0] + (g[4][0] - g[3][0]) * u, g[3][1] + (g[4][1] - g[3][1]) * u]; }
+    return bez(g[4], g[5], g[6], g[7], (s - 0.6) / 0.4);
+  }
+
+  function draw() {
+    const r = mark.getBoundingClientRect();
+    cx.clearRect(0, 0, w, h);
+    if (!r.width) return false;
+    const geos = threads.map((th, i) => geometry(th, i, r));
+    threads.forEach((th, i) => {
+      const g = geos[i];
+      const grad = cx.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0, `rgba(${th.color},0)`);
+      grad.addColorStop(0.3, `rgba(${th.color},${th.alpha})`);
+      grad.addColorStop(0.5, `rgba(${th.color},${th.alpha * 0.2})`); // quieter behind the letters
+      grad.addColorStop(0.7, `rgba(${th.color},${th.alpha})`);
+      grad.addColorStop(1, `rgba(${th.color},0)`);
+      cx.strokeStyle = grad;
+      cx.lineWidth = th.width;
+      cx.beginPath();
+      cx.moveTo(...g[0]);
+      cx.bezierCurveTo(...g[1], ...g[2], ...g[3]);
+      cx.lineTo(...g[4]);
+      cx.bezierCurveTo(...g[5], ...g[6], ...g[7]);
+      cx.stroke();
+    });
+    for (const b of beads) {
+      if (!still) b.s = (b.s + b.v) % 1;
+      const [x, y] = pointAt(geos[b.thread], b.s);
+      const fade = Math.sin(Math.PI * b.s); // bright mid-way, gone at the edges
+      const glow = cx.createRadialGradient(x, y, 0, x, y, 9);
+      glow.addColorStop(0, `rgba(255,244,214,${0.85 * fade})`);
+      glow.addColorStop(1, "rgba(255,244,214,0)");
+      cx.fillStyle = glow;
+      cx.beginPath();
+      cx.arc(x, y, 9, 0, 6.283);
+      cx.fill();
+    }
+    return r.bottom > -80;
+  }
+
+  const active = () => document.body.dataset.view === "home" && !document.body.classList.contains("modal-open") && !document.hidden;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (!active() || now - last < 33) return;
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    if (!still) t += dt;
+    const r = mark.getBoundingClientRect();
+    if (r.bottom < -80 && canvas.dataset.idle) return; // scrolled past the wordmark: rest
+    canvas.dataset.idle = draw() ? "" : "1";
+  }
+  requestAnimationFrame(frame);
+}

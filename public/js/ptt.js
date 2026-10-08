@@ -27,6 +27,7 @@ export class PushToTalk {
       return;
     }
     this.active = true;
+    this.onState("arming");
     try {
       this.stream ||= await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
     } catch (err) {

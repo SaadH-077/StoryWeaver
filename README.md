@@ -157,13 +157,14 @@ live log, safety decisions, the story bible and measured numbers; *How it works*
 
 What a listener sees, from the first idea to the last line, and what the agents are doing at each moment.
 
-**1 · Choose.** Type or say an idea (or tap one), pick the listener (little ones, family, grown-ups) and the length
-(1, 2 or 3 minutes — every one of them has a moment where you decide). The home page is a loom: a tapestry is woven
-row by row at the edges of the screen while you choose, a golden thread sews itself under the headline, and a twisted
-thread runs down the form, tying a knot at each step; once there is an idea, it runs all the way to "Weave my story"
-(which wakes up only when the agents are ready).
+**1 · Choose.** The home page is a loom. The name **StoryWeaver** is woven in the centre — its outline drawn in
+thread, then filled row by row, left and right, like a shuttle — while threads flow in from both sides of the screen
+and run through it, and a tapestry grows at the edges. Type or say an idea, or tap one of the ideas drifting past in
+two rows; pick the listener (little ones, family, grown-ups) and the length (1, 2 or 3 minutes — every one of them has
+a moment where you decide). A twisted thread runs down the form, tying a knot at each step; once there is an idea, it
+runs all the way to "Weave my story" (which wakes up only when the agents are ready).
 
-![Home: a tapestry woven at the edges, the thread through the form](docs/images/home.jpg)
+![Home: the woven wordmark, threads from both sides, ideas drifting past](docs/images/home.jpg)
 
 **2 · The crew assembles.** While the Guardian screens the request and the Storyteller writes the whole story in
 parallel, each agent's card joins the cast and lights up as it starts work; the thread above fills as each stage
@@ -180,14 +181,18 @@ choice comes. Every story has the choice — even a one-minute tale.
 |---|---|
 | ![Story playing, with the characters on the right](docs/images/story.jpg) | ![A choice](docs/images/choice.jpg) |
 
-**4 · Speak to it.** Hold the button (or Space) and talk: pick an option by voice, ask a question about the story,
-or make a wish (*"add a friendly firefly who glows like a lantern"*). The host answers at once ("Ooh, what a lovely
-idea!"), the next sentence plays, and from then on the story follows the wish — with a new picture of it coming true;
-if the choice is still ahead, the choice and both endings follow the wish too. Anyone the wish brings in joins the
-characters on the right, sewn in with a *✨ your wish* tag. The story never stops for it; if the free models are too
-busy to rewrite it in time, the host says so and keeps the idea for the next story.
+**4 · Speak to it — or type.** Hold the button (or Space) and talk, or press the keyboard button (or T) and type:
+pick an option, ask a question about the story, or make a wish (*"add a friendly firefly"*). The moment you start,
+the story waits — narration, music and the choice countdown pause, so the microphone hears only you — and the
+interrupted sentence is spoken again when it continues. The host answers at once ("Ooh, what a lovely idea!"), and
+from then on the story follows the wish — with a new picture of it coming true; if the choice is still ahead, the
+choice and both endings follow the wish too. Anyone the wish brings in joins the characters on the right, sewn in with
+a *✨ your wish* tag. If the free models are too busy to rewrite it in time, the host says so and keeps the idea for
+the next story.
 
-![Hold to talk: the listener is speaking](docs/images/listening.jpg)
+| Talking: the story waits for you | Typing instead |
+|---|---|
+| ![Hold to talk: the story waits while the listener speaks](docs/images/listening.jpg) | ![Typing a wish: the story waits while you type](docs/images/typing.jpg) |
 
 **5 · Look behind the curtain.** *The crew* drawer explains everything as it happens: what each agent did, the live
 log with every model call (model, latency, tokens), the safety layers this request passed, the story bible the
@@ -201,9 +206,24 @@ Storyteller wrote, and the numbers.
 | **The numbers** | **How it works (in the app)** |
 | ![Numbers: time to first sound, model calls, tokens, pictures](docs/images/drawer-numbers.jpg) | ![How it works](docs/images/how-it-works.png) |
 
-**6 · The end.** A cover, the choices you made, and what it took (minutes, parts, pictures, model calls).
+**6 · The end — and the Storybook.** A cover, the choices you made, and what it took (minutes, parts, pictures,
+model calls). Every story you hear is also kept in your **Storybook** (the button at the top of the home page): a
+shelf of covers, each opening as a book — a title page with the cast (wish newcomers included), the pictures that were
+painted for it on pages of their own, the text exactly as it was told, your wishes and choices marked in the margin,
+and pages that turn like paper. Books are kept in the browser (IndexedDB, pictures as small JPEGs) — nothing leaves
+the device.
 
-![End card](docs/images/end.png)
+| The end card | Your Storybook: the story, with its pictures |
+|---|---|
+| ![End card](docs/images/end.jpg) | ![The Storybook: a title page with the cast and the story's picture](docs/images/storybook.jpg) |
+
+![Turning a page in the Storybook](docs/images/storybook-turn.jpg)
+
+**Meet the crew — on stage.** *How it works* introduces the ten members of the crew in a little theatre: velvet
+curtains part, a spotlight finds each member in turn (what they do, and which model or tool they use), and the
+line-up takes a bow; tap anyone to call them back into the spotlight.
+
+![Meet the crew: the curtains part and each agent is introduced in the spotlight](docs/images/theatre.jpg)
 
 **When a request isn't suitable**, nothing is generated: StoryWeaver explains why in one sentence and offers three
 safe ideas instead (more in [Safety](#safety-how-harmful-content-is-avoided)).
@@ -550,7 +570,8 @@ storyweaver/
 │   ├── safety/              lexicon.py (layer 1), guardian.py (layers 2–4)
 │   └── media/               images.py, picture_shelf.py (+ shelf_pictures/), tts.py, stt.py, voices.py
 ├── public/                  the web client, no build step: index.html, css/, js/ (director, visuals, painter,
-│                            voices, audio/score + soundscape + mixer, ui, howitworks)
+│                            voices, audio/score + soundscape + mixer, ui, howitworks, loom — the woven home
+│                            page, storybook — the library of stories told)
 ├── api/index.py, vercel.json  serverless entry point
 ├── eval/                    run_eval.py, sources.py, data/, results/
 ├── tests/                   offline tests with a scripted model router

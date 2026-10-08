@@ -20,6 +20,7 @@
 
   <!-- ================================================================== HOME -->
   <main id="home" class="view">
+    <canvas id="threads" aria-hidden="true"></canvas>
     <canvas id="loom" aria-hidden="true"></canvas><div class="shuttle" id="shuttle" aria-hidden="true"></div>
     <header class="topbar">
       <a class="brand" href="#" aria-label="StoryWeaver home">
@@ -31,6 +32,7 @@
         <span class="word">Story<em>Weaver</em></span>
       </a>
       <nav class="nav">
+        <button class="pill-btn" data-open-book><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg><span>Storybook</span><b class="badge" id="book-count" hidden></b></button>
         <button class="pill-btn" data-open="how"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span>How it works</span></button>
       </nav>
     </header>
@@ -38,15 +40,33 @@
     <div class="home-wrap">
       <section class="hero">
         <span class="eyebrow"><span class="dot"></span>An agentic storyteller</span>
-        <h1>Stories you can <span class="shine">hear, see and shape.</span></h1>
+        <h1 class="wordmark" aria-label="StoryWeaver">
+          <svg viewBox="0 0 1000 232" aria-hidden="true">
+            <defs>
+              <linearGradient id="wm-cream" x1="0" y1="40" x2="0" y2="190" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#e6d6bb"/></linearGradient>
+              <linearGradient id="wm-gold" x1="470" y1="0" x2="975" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffe2a8"/><stop offset=".42" stop-color="#f7c873"/><stop offset=".76" stop-color="#ff8fb3"/><stop offset="1" stop-color="#a184ff"/></linearGradient>
+              <linearGradient id="wm-glint" x1="-400" y1="0" x2="-100" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+                <animate attributeName="x1" values="-400;1300" dur="7s" begin="3.4s" repeatCount="indefinite"/><animate attributeName="x2" values="-100;1600" dur="7s" begin="3.4s" repeatCount="indefinite"/></linearGradient>
+              <pattern id="wm-weave" width="16" height="12" patternUnits="userSpaceOnUse">
+                <rect x="0" y="1" width="8" height="4" rx="2" fill="#2a1a3a" fill-opacity=".34"/><rect x="8" y="7" width="8" height="4" rx="2" fill="#2a1a3a" fill-opacity=".34"/>
+                <rect x="10.5" y="0" width="1.4" height="6" rx=".7" fill="#fff" fill-opacity=".3"/><rect x="2.5" y="6" width="1.4" height="6" rx=".7" fill="#fff" fill-opacity=".3"/>
+              </pattern>
+              <mask id="wm-rows" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="232"><rect class="wm-row" x="0" y="0" width="1000" height="20.6" style="--i:0"/><rect class="wm-row r" x="0" y="20" width="1000" height="20.6" style="--i:1"/><rect class="wm-row" x="0" y="40" width="1000" height="20.6" style="--i:2"/><rect class="wm-row r" x="0" y="60" width="1000" height="20.6" style="--i:3"/><rect class="wm-row" x="0" y="80" width="1000" height="20.6" style="--i:4"/><rect class="wm-row r" x="0" y="100" width="1000" height="20.6" style="--i:5"/><rect class="wm-row" x="0" y="120" width="1000" height="20.6" style="--i:6"/><rect class="wm-row r" x="0" y="140" width="1000" height="20.6" style="--i:7"/><rect class="wm-row" x="0" y="160" width="1000" height="20.6" style="--i:8"/><rect class="wm-row r" x="0" y="180" width="1000" height="20.6" style="--i:9"/><rect class="wm-row" x="0" y="200" width="1000" height="20.6" style="--i:10"/><rect class="wm-row r" x="0" y="220" width="1000" height="20.6" style="--i:11"/></mask>
+            </defs>
+            <g class="wm-outline"><text x="500" y="172" text-anchor="middle" textLength="950" lengthAdjust="spacingAndGlyphs"><tspan class="wm-s">Story</tspan><tspan class="wm-w">Weaver</tspan></text></g>
+            <g mask="url(#wm-rows)"><g class="wm-fill"><text x="500" y="172" text-anchor="middle" textLength="950" lengthAdjust="spacingAndGlyphs"><tspan class="wm-s">Story</tspan><tspan class="wm-w">Weaver</tspan></text></g><g class="wm-tex"><text x="500" y="172" text-anchor="middle" textLength="950" lengthAdjust="spacingAndGlyphs"><tspan class="wm-s">Story</tspan><tspan class="wm-w">Weaver</tspan></text></g></g>
+            <g class="wm-shine"><text x="500" y="172" text-anchor="middle" textLength="950" lengthAdjust="spacingAndGlyphs"><tspan class="wm-s">Story</tspan><tspan class="wm-w">Weaver</tspan></text></g>
+          </svg>
+        </h1>
         <svg class="hero-thread" viewBox="0 0 600 44" aria-hidden="true">
           <defs><linearGradient id="ht-g" x1="0" x2="1"><stop offset="0" stop-color="#f7c873"/><stop offset=".55" stop-color="#ff8fb3"/><stop offset="1" stop-color="#a184ff"/></linearGradient>
             <mask id="ht-m" maskUnits="userSpaceOnUse"><path class="ht-reveal" d="M8 24 C 96 4 180 40 300 22 S 500 6 592 24"/></mask></defs>
           <path class="ht-stitch" d="M8 24 C 96 4 180 40 300 22 S 500 6 592 24" mask="url(#ht-m)"/>
           <g class="ht-needle"><ellipse rx="7" ry="2.2"/><animateMotion dur="2.8s" fill="freeze" rotate="auto" calcMode="spline" keyTimes="0;1" keyPoints="0;1" keySplines=".25 .7 .3 1" path="M8 24 C 96 4 180 40 300 22 S 500 6 592 24"/></g>
         </svg>
-        <p class="lead">Tell StoryWeaver what to imagine. A crew of AI agents writes it, gives every character a voice,
-          paints each scene and scores it with music — live, while you listen. Choose what happens next, or just say it.</p>
+        <p class="tagline">Every idea, woven into a story you can <span class="shine">hear, see and shape.</span></p>
+        <p class="lead">A crew of AI agents writes it, voices every character, paints each scene and scores it with
+          music — live, while you listen. Choose what happens next, or just say it.</p>
       </section>
 
       <form id="story-form" autocomplete="off" onsubmit="return false">
@@ -62,7 +82,11 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button>
           </div>
         </div>
-        <div class="chips" id="examples" aria-label="Story ideas"></div>
+        <div class="ideas" id="examples" aria-label="Story ideas: tap one to use it">
+          <div class="ideas-label"><i></i>Need a spark? Tap an idea as it drifts by<i></i></div>
+          <div class="marquee"><div class="track" id="ideas-a"></div></div>
+          <div class="marquee rev"><div class="track" id="ideas-b"></div></div>
+        </div>
 
         <div class="settings" data-step>
           <section class="card">
@@ -165,6 +189,14 @@
       </div>
     </section>
 
+    <div class="hold-note" id="hold-note" aria-live="polite"><span class="hn-dot"></span><span id="hold-text">The story is waiting for you…</span></div>
+    <form class="typebar" id="typebar" hidden autocomplete="off">
+      <span class="tb-ico" aria-hidden="true">✎</span>
+      <label class="sr-only" for="type-input">Type a wish, a question or your choice</label>
+      <input id="type-input" maxlength="200" placeholder="Type a wish (“add a dragon”), a question, or your choice…">
+      <button type="submit" class="tb-send">Send</button>
+      <button type="button" class="tb-close" id="type-close" aria-label="Close and continue the story">✕</button>
+    </form>
     <footer class="dock">
       <div class="timeline"><div id="tl-segs" style="display:flex;gap:6px;flex:1"></div><div class="tl-time" id="tl-time"></div></div>
       <div class="controls">
@@ -172,6 +204,7 @@
           <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
           <svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
         <button class="round" id="cc-btn" title="Captions on/off (C)" aria-label="Toggle captions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.5a2 2 0 1 0 0 3M17 10.5a2 2 0 1 0 0 3"/></svg></button>
+        <button class="round" id="type-btn" title="Type instead (T)" aria-label="Type a wish, a question or your choice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M9 15h6"/></svg></button>
         <button class="ptt" id="ptt" title="Hold to talk (Space)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg><span id="ptt-label">Hold to talk</span><kbd>Space</kbd></button>
         <div class="mix"><label title="Music">♪<input type="range" id="vol-music" min="0" max="1" step="0.05" value="0.7"></label><label title="Ambience">≈<input type="range" id="vol-amb" min="0" max="1" step="0.05" value="0.8"></label></div>
       </div>
@@ -186,7 +219,7 @@
           <p class="end-text" id="end-logline"></p>
           <div class="end-stats" id="end-stats"></div>
           <p class="end-text" id="end-choices"></p>
-          <div class="end-actions"><button class="btn gold" id="again-btn">✦ Weave another story</button><button class="btn" id="end-crew">Meet the crew of this story</button></div>
+          <div class="end-actions"><button class="btn gold" id="again-btn">✦ Weave another story</button><button class="btn" id="end-book">📖 Read it in your Storybook</button><button class="btn" id="end-crew">Meet the crew of this story</button></div>
         </div>
       </div>
     </section>
@@ -219,6 +252,29 @@
     <div class="panel" id="tab-numbers" hidden><dl class="kv" id="numbers"></dl></div>
   </aside>
 
+  <!-- ================================================================== STORYBOOK -->
+  <div class="modal storybook" id="storybook" hidden>
+    <div class="modal-inner sb">
+      <button class="round modal-close" data-close="storybook" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <section id="sb-shelf">
+        <span class="eyebrow"><span class="dot"></span>Your Storybook</span>
+        <h2>Every story you've heard, kept with its pictures.</h2>
+        <p class="lead">Open a book to read it again, page by page. Stories are kept in this browser only.</p>
+        <div class="sb-shelf" id="sb-books"></div>
+      </section>
+      <section id="sb-reader" hidden>
+        <div class="sb-bar"><button class="btn" id="sb-back">← All stories</button><div class="sb-title" id="sb-title"></div><button class="btn ghost" id="sb-delete">Remove</button></div>
+        <div class="book" id="sb-book">
+          <div class="pages">
+            <div class="page left" id="sb-left"></div><div class="page right" id="sb-right"></div>
+            <div class="leaf" id="sb-leaf"><div class="front page"></div><div class="back page"></div></div>
+          </div>
+        </div>
+        <div class="sb-nav"><button class="round" id="sb-prev" aria-label="Previous page">‹</button><span id="sb-pageno"></span><button class="round" id="sb-next" aria-label="Next page">›</button></div>
+      </section>
+    </div>
+  </div>
+
   <!-- ================================================================== HOW IT WORKS -->
   <div class="modal" id="how" hidden>
     <div class="modal-inner hiw">
@@ -239,8 +295,8 @@
       </div>
 
       <h3>Meet the crew</h3>
-      <p>Ten roles, each with one job. Only two call a language model for each story; plain code and your browser do everything that should be instant and predictable.</p>
-      <div class="crew-grid" id="hiw-crew"></div>
+      <p>Ten roles, each with one job. Only two call a language model for each story; plain code and your browser do everything that should be instant and predictable. The curtain rises on them one by one — tap anyone in the line-up to bring them back into the spotlight.</p>
+      <div class="theatre" id="hiw-crew"></div>
 
       <h3>How a story flows</h3>
       <p>One LangGraph workflow on a stateless Python API: the Guardian and the Storyteller work in parallel, the Editor checks every line, and the whole story — both endings included — reaches your browser before it begins. While you listen, nothing waits.</p>
@@ -270,6 +326,7 @@
   <link rel="modulepreload" href="/js/painter.js">
   <link rel="modulepreload" href="/js/ptt.js">
   <link rel="modulepreload" href="/js/stars.js">
+  <link rel="modulepreload" href="/js/storybook.js">
   <link rel="modulepreload" href="/js/ui.js">
   <link rel="modulepreload" href="/js/visuals.js">
   <link rel="modulepreload" href="/js/voices.js">

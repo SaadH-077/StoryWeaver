@@ -142,6 +142,9 @@ export function setProgress(segment, fraction, timeText) {
 }
 
 // ------------------------------------------------------------------------------------------- choices
+let choiceHeld = false;
+export function holdChoice(on) { choiceHeld = on; }
+
 export function showChoices({ question, options, timeout }, onPick) {
   $("#choice-q").textContent = question || "What should happen next?";
   $("#choice-cards").innerHTML = options.map((o) => `<button class="choice-card" data-k="${esc(o.keyword)}">
@@ -149,9 +152,12 @@ export function showChoices({ question, options, timeout }, onPick) {
   document.querySelectorAll("#choice-cards .choice-card").forEach((b) => b.addEventListener("click", () => onPick(b.dataset.k, false)));
   $("#choices").hidden = false;
   const ring = $("#cd");
-  const started = performance.now();
-  const timer = setInterval(() => {
-    const left = Math.max(0, 1 - (performance.now() - started) / (timeout * 1000));
+  let elapsed = 0, tick = performance.now();
+  const timer = setInterval(() => { // the countdown waits while the listener is speaking or typing
+    const now = performance.now();
+    if (!choiceHeld) elapsed += now - tick;
+    tick = now;
+    const left = Math.max(0, 1 - elapsed / (timeout * 1000));
     ring.style.strokeDashoffset = String(100.5 * (1 - left));
     if (left <= 0) { clearInterval(timer); onPick(options[0].keyword, true); }
   }, 100);

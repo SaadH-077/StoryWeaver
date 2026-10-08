@@ -2,6 +2,8 @@
 
 import copy
 
+import pytest
+
 from storyweaver.agents.deps import Deps
 from storyweaver.agents.graphs import build_chapter_graph, build_plan_graph
 from storyweaver.planner import shape_for
@@ -107,3 +109,11 @@ async def test_when_every_model_is_busy_a_hand_written_story_is_told(settings):
     state, events = await plan(router)
     assert state["shelf"] and state["bible"].title == "Pip and the Night Lantern"
     assert set(state["branches"]) == {"light", "mo"} and any(k == "opening" for k, _ in events)
+
+
+@pytest.mark.parametrize("minutes", [1, 2, 3])
+async def test_every_length_has_a_choice_even_when_the_shelf_tells_it(settings, minutes):
+    from storyweaver.llm import LLMError
+    router = ScriptedRouter(settings, {"storyteller": LLMError("storyteller", ["all rate-limited"])})
+    state, _ = await plan(router, minutes=minutes)
+    assert len(state["scripts"][0].choices) == 2 and len(state["branches"]) == 2

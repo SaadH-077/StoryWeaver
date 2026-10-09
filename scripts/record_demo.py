@@ -5,7 +5,8 @@ quiet parts (the home screen, a refusal, the in-app explanation), and ffmpeg joi
     uv run storyweaver --port 8020 --no-browser          # in one terminal
     uv run python scripts/record_demo.py                  # in another terminal
 
-It writes demo/storyweaver_demo.mp4 and a short preview, docs/images/demo.gif.
+It writes demo/storyweaver_demo.mp4 and a short silent preview, docs/images/demo.gif. To cut the preview as a highlight
+reel from an existing video instead: --reel "1:6,62:68,88:92" (start:end seconds of each moment).
 
 Needs ffmpeg (on PATH, or ``pip install imageio-ffmpeg``) and Microsoft Edge or Google Chrome.
 The spoken wish is a real voice clip (made with the neural voices) fed to the browser as its microphone.
@@ -36,15 +37,20 @@ BROWSERS = [r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
             "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
 WISH = "Please add a friendly firefly who glows like a little lantern!"
 PRESENTER = "en-US-AndrewNeural"
+QUESTION = "Who is writing the letters?"
 VOICEOVER = {
-    "intro": "This is StoryWeaver, an immersive storytelling agent. Type or say an idea, choose who is listening "
-             "and how long you have, then pick the voices. A crew of A.I. agents does the rest.",
-    "story": "Let's ask for a two-minute story for little ones.",
-    "second": "Now a one-minute story for grown-ups, and a look behind the curtain.",
+    "intro": "This is StoryWeaver, an immersive storytelling agent. Type or say an idea, or pick one drifting past. "
+             "Choose who is listening and how long you have, and a crew of A.I. agents does the rest.",
+    "story": "Let's ask for a two-minute story for little ones. Halfway through, I'll hold the talk button and "
+             "make a wish.",
+    "book": "Every story is kept in the Storybook, with its pictures, to read again like a real book.",
+    "second": "Now a one-minute story for grown-ups. This time I'll type a question instead, "
+              "and look behind the curtain.",
     "refusal": "Requests that aren't suitable never reach the storyteller. StoryWeaver explains why, "
                "and offers safe ideas instead.",
-    "how": "Everything is explained inside the app: the crew of ten agents, how a story flows, the four safety "
-           "layers, every design decision, and the measured results.",
+    "how": "Everything is explained inside the app. The crew of ten agents takes the stage, followed by how a "
+           "story flows, the four safety layers, the design decisions and the measured results.",
+    "outro": "And both stories are waiting on the shelf. That's StoryWeaver.",
 }
 
 # Everything a story plays goes through its AudioContext into the destination (each story opens a new context):
@@ -191,8 +197,8 @@ class Page:
     async def glide(self, inside, to, ms=1800):
         await self.js(f"window.__glide({json.dumps(inside)}, {json.dumps(to)}, {ms})")
 
-    async def key(self, kind):
-        event = f"new KeyboardEvent('{kind}', {{code: 'Space', key: ' ', bubbles: true}})"
+    async def key(self, kind, code="Space", key=" "):
+        event = f"new KeyboardEvent('{kind}', {{code: '{code}', key: '{key}', bubbles: true}})"
         await self.js(f"document.body.dispatchEvent({event}); 1")
 
     async def view(self) -> str:
@@ -206,9 +212,16 @@ async def wait_for(page: Page, what: str, limit: float) -> bool:
     return await page.until(expr, limit)
 
 
-async def story(page: Page, prompt: str, audience: str, minutes: int):
+async def story(page: Page, prompt: str, audience: str, minutes: int, tap_idea: bool = False):
     await page.glide("#prompt", "top", 900)
-    await page.type("#prompt", prompt)
+    if tap_idea:  # tap the idea as it drifts past (whichever copy is nearest the middle of the screen)
+        await page.js(f"""(() => {{ const mid = innerWidth / 2;
+            const all = [...document.querySelectorAll('#examples .idea')]
+              .filter((c) => c.dataset.text === {json.dumps(prompt)});
+            const near = (c) => Math.abs(c.getBoundingClientRect().left + c.offsetWidth / 2 - mid);
+            all.sort((a, b) => near(a) - near(b))[0]?.click(); return 1; }})()""")
+    else:
+        await page.type("#prompt", prompt)
     await asyncio.sleep(0.4)
     await page.click(f"#audience [data-value={audience}]")
     await asyncio.sleep(0.5)
@@ -269,12 +282,16 @@ async def run(args) -> int:
             await page.until("!document.querySelector('#begin').disabled && "
                              "document.querySelector('#status-line').textContent.includes('Agents')", 60)
             await page.cdp("Page.startScreencast", format="jpeg", quality=82, maxWidth=1280, maxHeight=720)
+            # reload on camera: the name is woven from scratch (the server is warm, so it is ready at once)
+            await page.cdp("Page.reload")
+            await page.until("!document.querySelector('#begin').disabled && "
+                             "document.querySelector('#status-line').textContent.includes('Agents')", 60)
             t_start = time.time()
 
             print("0) the home screen and its options")
-            await asyncio.sleep(1.0)
+            await asyncio.sleep(0.6)
             length = await say("intro")
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(6.0)  # the name is woven, the threads flow, the ideas drift past
             await page.glide("#home", "#audience", 2200)
             await asyncio.sleep(1.2)
             await page.glide("#home", "#length", 1800)
@@ -283,19 +300,17 @@ async def run(args) -> int:
             await page.click('#length [data-value="1"]')
             await asyncio.sleep(0.8)
             await page.glide("#home", "#engine", 1800)
-            await asyncio.sleep(1.0)
-            await page.glide("#home", "bottom", 2000)
-            await asyncio.sleep(max(1.0, length - 10.5))
+            await asyncio.sleep(max(1.0, length - 14.0))
             await page.glide("#home", "top", 1800)
             mark("home tour done")
 
-            print("1) a 2-minute story for little ones, with a spoken wish and a choice")
+            print("1) a 2-minute story for little ones, with a spoken wish, a choice and the Storybook")
             await say("story")  # the presenter speaks while the idea is typed
             await story(page, "A little hedgehog who is afraid of the dark", "kids", 2)
             mark("story 1 on stage")
             await page.until("document.querySelector('#chapter-label').textContent.startsWith('Chapter')", 90)
             await asyncio.sleep(args.wish_after)  # a few sentences into the first part: the change is heard at once
-            await page.key("keydown")
+            await page.key("keydown")  # the story waits while the listener speaks
             await asyncio.sleep(4.6)  # the clip is ~3.5 s
             await page.key("keyup")
             mark("wish spoken")
@@ -306,23 +321,49 @@ async def run(args) -> int:
                 await wait_for(page, "no-choice", 20)
             await wait_for(page, "end", 170)
             mark("story 1 ended")
-            await asyncio.sleep(6.0)  # the end card
+            await asyncio.sleep(4.0)  # the end card
+            await page.until("!document.querySelector('#end-book').hidden", 15)
+            await page.click("#end-book")
+            await asyncio.sleep(1.2)
+            length = await say("book")
+            await asyncio.sleep(2.0)
+            for _ in range(3):
+                await page.click("#sb-next")
+                await asyncio.sleep(2.6)
+            await asyncio.sleep(max(0.5, length - 8.0))
+            await page.key("keydown", "Escape", "Escape")
+            await asyncio.sleep(0.8)
+            mark("storybook shown")
 
-            print("2) a 1-minute story for grown-ups, with a look behind the curtain")
+            print("2) a 1-minute story for grown-ups: a typed question, a choice, a look behind the curtain")
             await page.click("#again-btn")
             await page.until("document.body.dataset.view === 'home'", 10)
             await asyncio.sleep(0.8)
             await say("second")
-            await story(page, "A lighthouse keeper who receives letters from the future", "adults", 1)
+            await asyncio.sleep(1.5)
+            await story(page, "A lighthouse keeper who receives letters from the future", "adults", 1, tap_idea=True)
             mark("story 2 on stage")
-            await asyncio.sleep(16)
+            await page.until("document.querySelector('#chapter-label').textContent.startsWith('Chapter')", 90)
+            await asyncio.sleep(6.0)
+            await page.click("#type-btn")  # the story waits while the listener types
+            await asyncio.sleep(0.8)
+            await page.type("#type-input", QUESTION, delay=0.06)
+            await asyncio.sleep(0.6)
+            await page.js("document.querySelector('#typebar').requestSubmit(); 1")
+            mark("question typed")
+            if await wait_for(page, "choice", 120):
+                mark("choice shown")
+                await asyncio.sleep(4.0)
+                await page.click("#choice-cards button:last-child")
+                await wait_for(page, "no-choice", 20)
+            await asyncio.sleep(3.0)
             await page.click("#crew-btn")
             for tab in ("crew", "log", "safety", "bible", "numbers"):
                 await page.click(f".drawer .tabs [data-tab={tab}]")
-                await asyncio.sleep(3.2)
+                await asyncio.sleep(3.0)
             await page.click("#drawer-close")
             mark("drawer shown")
-            await wait_for(page, "end", 75)
+            await wait_for(page, "end", 90)
             mark("story 2 ended")
             await asyncio.sleep(5.0)
 
@@ -341,19 +382,30 @@ async def run(args) -> int:
             await say("refusal", wait=True)
             await asyncio.sleep(1.0)
 
-            print("4) how it works, inside the app")
+            print("4) how it works, inside the app: the crew on stage, then the rest")
             await page.click("#refusal-back")
             await page.until("document.body.dataset.view === 'home'", 10)
             await page.click("#home [data-open=how]")
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(1.0)
             length = await say("how")
-            for section, pause in (("#hiw-crew", 2.5), ("#hiw-diagram", 4.0), ("#hiw-safety", 3.0),
-                                   ("#hiw-decisions", 3.0), ("#hiw-metrics", 3.5)):
+            await page.glide("#hiw-crew", "#hiw-crew", 1200)
+            await asyncio.sleep(13.0)  # the curtains part and the first members step into the spotlight
+            for section, pause in (("#hiw-diagram", 4.0), ("#hiw-safety", 3.0), ("#hiw-decisions", 3.0),
+                                   ("#hiw-metrics", 3.5)):
                 await page.glide("#hiw-crew", section, 1600)
                 await asyncio.sleep(pause)
             await page.glide("#hiw-crew", "bottom", 1500)
-            await asyncio.sleep(2.5)
+            await asyncio.sleep(2.0)
+            await page.click("[data-close=how]")
+            await asyncio.sleep(0.8)
             mark("how it works shown")
+
+            print("5) the Storybook shelf")
+            await page.click("[data-open-book]")
+            await asyncio.sleep(0.8)
+            await say("outro", wait=True)
+            await asyncio.sleep(2.0)
+            mark("shelf shown")
 
             await page.cdp("Page.stopScreencast")
             t_end = time.time()
@@ -401,15 +453,22 @@ async def run(args) -> int:
                     "-t", f"{t_end - first:.2f}", "-movflags", "+faststart", str(out)], check=True)
     print(f"wrote {out.relative_to(ROOT)} ({out.stat().st_size / 1e6:.1f} MB, {t_end - first:.0f} s)")
 
-    # a short silent preview for the README: the crew assembling and the story beginning
-    gif = ROOT / "docs" / "images" / "demo.gif"
-    subprocess.run([ffmpeg, "-y", "-loglevel", "error", "-ss", f"{args.gif_from:.1f}", "-t", f"{args.gif_seconds:.1f}",
-                    "-i", str(out), "-vf", "fps=8,scale=720:-1:flags=lanczos,split[a][b];"
-                    "[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4", str(gif)],
-                   check=True)
-    print(f"wrote {gif.relative_to(ROOT)} ({gif.stat().st_size / 1e6:.1f} MB)")
     shutil.rmtree(work, ignore_errors=True)
+    preview(ffmpeg, out, [(args.gif_from, args.gif_from + args.gif_seconds)])
     return 0
+
+
+def preview(ffmpeg: str, video: Path, moments: list[tuple[float, float]]) -> None:
+    """A silent animated preview for the README: the given moments of the video, joined."""
+    gif = ROOT / "docs" / "images" / "demo.gif"
+    cuts = "".join(f"[0:v]trim={a}:{b},setpts=PTS-STARTPTS,fps=7,scale=720:-1:flags=lanczos[v{i}];"
+                   for i, (a, b) in enumerate(moments))
+    joined = "".join(f"[v{i}]" for i in range(len(moments)))
+    subprocess.run([ffmpeg, "-y", "-loglevel", "error", "-i", str(video), "-filter_complex",
+                    f"{cuts}{joined}concat=n={len(moments)}:v=1:a=0,split[a][b];"
+                    "[a]palettegen=max_colors=128:stats_mode=diff[p];"
+                    "[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle", str(gif)], check=True)
+    print(f"wrote {gif.relative_to(ROOT)} ({gif.stat().st_size / 1e6:.1f} MB)")
 
 
 def main() -> int:
@@ -421,7 +480,13 @@ def main() -> int:
                         help="seconds into story 1's first part before the spoken wish")
     parser.add_argument("--gif-from", type=float, default=19.0, help="where the README preview starts (seconds)")
     parser.add_argument("--gif-seconds", type=float, default=16.0)
-    return asyncio.run(run(parser.parse_args()))
+    parser.add_argument("--reel", help="only cut the preview from demo/storyweaver_demo.mp4: start:end,start:end,…")
+    args = parser.parse_args()
+    if args.reel:
+        moments = [tuple(float(x) for x in part.split(":")) for part in args.reel.split(",")]
+        preview(find_ffmpeg(args.ffmpeg), ROOT / "demo" / "storyweaver_demo.mp4", moments)
+        return 0
+    return asyncio.run(run(args))
 
 
 if __name__ == "__main__":

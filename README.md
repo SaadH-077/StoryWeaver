@@ -19,16 +19,20 @@ reliably on **free model tiers**.
 **▶ Try it live: [storyweaver-virid.vercel.app](https://storyweaver-virid.vercel.app)** — runs on free model tiers
 (if they are busy, StoryWeaver tells one of its own stories rather than fail).
 
-### ▶ Demo — with sound
+### ▶ Demo
 
-<video src="demo/storyweaver_demo.mp4" controls width="100%" poster="docs/images/weaving.jpg"></video>
+[![StoryWeaver demo: a 55-second silent highlight reel; click for the full video with sound](docs/images/demo.gif)](demo/storyweaver_demo.mp4)
 
-[![StoryWeaver demo: click to watch the full video with sound](docs/images/demo.gif)](demo/storyweaver_demo.mp4)
+A 55-second silent highlight reel of the demo. **Click it for the full 7-minute video with sound**
+([`demo/storyweaver_demo.mp4`](demo/storyweaver_demo.mp4)). The video was recorded end to end by
+`scripts/record_demo.py`, with no editing. It shows the woven home page, then **three requests**:
+* a 2-minute story for little ones, with a **spoken wish** (the story waits while you speak, and the newcomer joins the
+  cast), a **choice**, and the story read again in the **Storybook**;
+* a 1-minute story for grown-ups, tapped from the drifting ideas, with a **typed question**, a choice, and a look
+  inside the agent crew;
+* an unsuitable request that is kindly refused.
 
-**[▶ Watch the demo (MP4, with sound) — `demo/storyweaver_demo.mp4`](demo/storyweaver_demo.mp4)** · about 6 minutes,
-recorded end to end by `scripts/record_demo.py` (no editing): a tour of the options, then **three requests** — a
-2-minute story for little ones with a **spoken wish** and a **choice**, a 1-minute story for grown-ups with a look
-inside the agent crew, and an unsuitable request that is kindly refused — and finally the in-app explanation.
+It ends with the crew theatre, the rest of the in-app explanation, and both stories waiting on the Storybook shelf.
 
 A walk-through of every screen is in [A tour, screen by screen](#a-tour-screen-by-screen); how the agents work
 together is in [Architecture: the agent system](#architecture-the-agent-system).
@@ -71,11 +75,8 @@ uv run storyweaver             # opens http://localhost:8000
 | `CLOUDFLARE_API_TOKEN` | Optional. FLUX pictures | Cloudflare → *AI → Workers AI → Use REST API → Create a Workers AI API token* |
 | `POLLINATIONS_KEY` | Optional. A more reliable backup picture provider | [enter.pollinations.ai](https://enter.pollinations.ai) |
 
-Without the optional keys everything still works: pictures fall back to anonymous Pollinations, the picture shelf
-and the browser painter, and voices to Microsoft's neural voices and the browser's own.
-
-Optional free keys: `GEMINI_API_KEY` (extra fallback models, expressive cloud voices) and `CLOUDFLARE_ACCOUNT_ID` +
-`CLOUDFLARE_API_TOKEN` (FLUX pictures). Without them, pictures fall back to Pollinations, then to the **picture
+Without the optional keys everything still works: voices fall back to Microsoft's neural voices and the browser's own,
+and pictures to anonymous Pollinations, then to the **picture
 shelf** (up to 36 storybook backdrops in `src/storyweaver/media/shelf_pictures/`, painted once by
 `scripts/make_picture_shelf.py` and matched to each scene by keywords), and finally to scenes painted in the browser — the story never waits for a picture. To repaint the shelf
 in the best quality once Cloudflare's daily allowance is fresh (it resets at 00:00 UTC):
@@ -85,7 +86,7 @@ in the best quality once Cloudflare's daily allowance is fresh (it resets at 00:
 uv run python scripts/cli_story.py "a dragon who opens a bakery" --audience kids --minutes 2   # in the terminal
 uv run storyweaver-mcp                       # as an MCP server (tools: tell_story, check_safety)
 uv run python scripts/mcp_client_demo.py     # an MCP client: discovers those tools and calls them
-uv run pytest                                # 52 offline tests (scripted models, no network)
+uv run pytest                                # 61 offline tests (scripted models, no network)
 uv run --extra eval python eval/run_eval.py  # the evaluation suite (see below)
 uv sync --extra local && uv run python scripts/download_models.py   # optional on-device Kokoro voices
 uv run python scripts/record_demo.py         # re-record the demo video (server on :8020, see the script)
@@ -138,17 +139,17 @@ live log, safety decisions, the story bible and measured numbers; *How it works*
 |---|---|
 | Accept a user request for a story on any topic | Typed or **spoken** (Whisper) idea, any topic, plus the listener and the length — [tour, step 1](#a-tour-screen-by-screen); `POST /api/plan` |
 | A coherent, engaging story | One structured pass on the Story Spine × Freytag arc with a planted setup and payoff, schema-enforced parts, reading level per audience, deterministic Editor — [architecture](#architecture-the-agent-system), [evaluation](#evaluation) |
-| An immersive experience | Voices per character, adaptive music and soundscape, pictures timed to the narration, a choice, spoken wishes and questions, no pauses — [what "immersive" means here](#what-immersive-means-here) |
+| An immersive experience | Voices per character, adaptive music and soundscape, pictures timed to the narration, a choice in every story, wishes and questions spoken or typed (the story waits for you), no pauses, a Storybook to read it again — [what "immersive" means here](#what-immersive-means-here) |
 | A simple user-facing application | A web app with one input box; everything else is optional — [tour](#a-tour-screen-by-screen) |
 | Python for the main implementation | `src/storyweaver/` — FastAPI, LangGraph, Pydantic (the browser only plays the story) |
 | At least one LLM via an API or locally | Groq `gpt-oss-20b` / `gpt-oss-120b` / `qwen3.8-27b` / `gpt-oss-safeguard-20b`, Gemini fallbacks, Whisper — [APIs and models](#apis-models-libraries-and-assets) |
 | The workflow as an agent or agentic system | A hierarchical crew of 10 agents on a LangGraph supervisor graph, with tools, routing, parallel work, a reflection loop and a human in the loop; also exposed over **MCP** — [architecture](#architecture-the-agent-system) |
 | Credentials out of the source code | `.env` (git-ignored) from `.env.example`; settings via pydantic-settings; `scripts/make_zip.py` scans the ZIP for secrets |
-| Understandable, maintainable structure | One module per concern, typed schemas between agents, every prompt and the content policy in `prompts.py`, 52 offline tests, Ruff — [project structure](#project-structure) |
+| Understandable, maintainable structure | One module per concern, typed schemas between agents, every prompt and the content policy in `prompts.py`, 61 offline tests, Ruff — [project structure](#project-structure) |
 | ZIP `Firstname_Lastname_Immersive_Storytelling_Agent.zip` | `uv run python scripts/make_zip.py --name Firstname_Lastname` |
 | Source, dependency file, configuration template | `src/`, `public/`, `pyproject.toml` + `uv.lock` + `requirements.txt`, `.env.example` |
 | README: setup · architecture · immersion · decisions · AI tools · APIs and assets · limitations | [Quick start](#quick-start) · [Architecture](#architecture-the-agent-system) · [Immersive](#what-immersive-means-here) · [Decisions](#design-decisions-and-trade-offs) · [AI tools](#how-ai-tools-were-used) · [APIs](#apis-models-libraries-and-assets) · [Limitations](#limitations-and-next-steps) |
-| A demonstration with at least two requests | `demo/storyweaver_demo.mp4` — three requests, a spoken wish and a choice ([top of this page](#-demo--with-sound)) |
+| A demonstration with at least two requests | `demo/storyweaver_demo.mp4` — three requests: a spoken wish, a typed question, a choice in each story, the Storybook and a refusal ([top of this page](#-demo)) |
 | Avoid harmful content; respect usage terms | Four safety layers, red-teamed — [safety](#safety-how-harmful-content-is-avoided); services and their terms — [APIs](#apis-models-libraries-and-assets) |
 
 ---
@@ -234,7 +235,7 @@ safe ideas instead (more in [Safety](#safety-how-harmful-content-is-avoided)).
 
 ## What "immersive" means here
 
-**Immersion is the moment the listener forgets the interface and is simply *inside* the story.** I split it into five
+**Immersion is the moment the listener forgets the interface and is simply *inside* the story.** I split it into six
 qualities and built one mechanism for each:
 
 | Quality | What it means | How StoryWeaver builds it |
@@ -242,8 +243,9 @@ qualities and built one mechanism for each:
 | **Hear it** | The scene surrounds you | A voice per character with directed delivery, a procedural soundscape (14 ambience beds, 12 effects) and an adaptive score with a theme per story, mixed like a radio drama |
 | **See it** | Pictures at the right moment | One illustration per minute at the story's most striking moments, timed to the narrated line, with slow camera moves, cross-fades, weather particles and live word-by-word captions |
 | **Follow it** | A story you can follow by ear | Classic storytelling — world and hero first ("Once upon a time…"), then cause and effect on the Story Spine, a planted detail that pays off, a reading level per audience |
-| **Shape it** | You co-create while it plays | A choice whose both outcomes already exist; spoken wishes woven in from the next sentence on (with a picture of them coming true); questions answered in the narrator's voice |
+| **Shape it** | You co-create while it plays | A choice in every story, whose both outcomes already exist; wishes — spoken or typed — woven in from the next sentence on (with a picture of them coming true, and any newcomer joining the cast on screen); questions answered in the narrator's voice; the story waits while you speak or type |
 | **Never break the spell** | No pauses, nothing jarring | The whole story exists before it starts; every service has a quiet fallback (another model, another voice, a painted picture) |
+| **Keep it** | A story worth hearing is worth keeping | Every story goes into the Storybook — a book with its pictures, the cast, your wishes and choices, and pages that turn |
 
 ### How it builds on my earlier research
 StoryWeaver's approach to child-friendly stories is grounded in my own research. My B.Sc. thesis at LUMS [2] built a
@@ -457,7 +459,7 @@ story instead of a dozen; the chapter graph remains as a fallback.
 **What would a paid model change?** Richer prose, no rate limits — but not speed: Groq's ~1,000 tokens/s is about ten
 times what GPT-4-class APIs deliver. At GPT-4o prices a story costs about three cents.
 
-**How do you know it works?** 52 offline tests with a scripted model; an evaluation suite on public safety benchmarks,
+**How do you know it works?** 61 offline tests with a scripted model; an evaluation suite on public safety benchmarks,
 a children's red-team and a baseline comparison; and end-to-end runs in a real browser — the demo video is recorded
 by a script, not edited.
 
@@ -524,16 +526,25 @@ agree. Reading level, length vs minutes chosen, safety of every line and latency
 | Safe-but-scary-sounding requests still told | **78% of 40** — 0 wrongly blocked by the lexicon; the over-refusals come from the policy model on adult edge cases (Holocaust poems, heist films) |
 | Finished stories humans judged unsuitable for children (Kahaani) | caught **25%** by the deterministic lexicon alone, **75%** with a model reviewer |
 | Generated lines flagged by the output checks | **0** |
-| Whole story written, checked and ready (median) | **3.9 s** (2.4–2.6 s on an idle free tier) |
+| Reading level of stories for little ones | **grade 2.9** (target ≤ 4; TinyStories 2.8) — the single-prompt baseline writes at 6.5 |
+| Story quality vs a single-prompt baseline (pairwise judge, both orders) | **baseline preferred in 6 of 6** (2 minutes each) — see below |
+| Whole story written, checked and ready (median) | **4.2 s** (2.4–2.6 s on an idle free tier) |
 
 **What this tells us — honestly.** Safety holds: nothing harmful got through, at the cost of over-caution with grown-up
-edge cases. The story comparison (full table in [`eval/results/summary.md`](eval/results/summary.md)) showed where to
-improve: the first version of the pipeline wrote very simple stories for little ones (reading grade ~0.4, where
-TinyStories sits at 2.8), with less sensory detail than a single free-form story. One run also exposed a real bug: the model returned no endings,
-so the story ended on its question. That is now impossible: the schema demands every part, and a missing ending is
-repaired or the question removed. The prompt now aims for picture-book grade 2–3 with vivid detail. The comparison was
-cut short by exhausted free quotas after a day of testing (a third of the calls needed fallback models) and should be
-re-run with fresh quotas: `uv run --extra eval python eval/run_eval.py --only stories --fresh`.
+edge cases. The story comparison (re-run on fresh quotas, 6 stories; every story, both versions and the judge's reasons
+are in [`eval/results/summary.md`](eval/results/summary.md) and `report.json`) went to the baseline every time. The
+reasons say why:
+* **The judge reads an interactive story as a printed one.** In 8 of its 12 verdicts it faults the *choice* itself: a
+  question to the listener followed by one branch reads as "disjointed" next to a linear tale. That is the cost of the
+  format on paper, not something a listener hears — but a fair judge needs to see the story as it is experienced
+  (or both branches), and the harness should be changed to do that.
+* **Real weaknesses, too.** The one-pass, 2-minute stories explain less and are vaguer about cause and effect ("magic"
+  where the baseline gives a reason), and one ending contradicted itself. The fixes are concrete: a plausibility check
+  on both endings, and a larger model for the Storyteller when the latency budget allows (gpt-oss-20b is chosen for its
+  ~2.5 s).
+* **What improved.** The first run found stories for little ones far too simple (grade 0.4); after the prompt change
+  they sit at grade 2.9, on target, while the unconstrained baseline writes at grade 6.5 for the same children. Length
+  matches the minutes chosen within 15%, and no generated line was flagged.
 
 The deterministic Editor alone is a coarse net for *finished* stories (25% of the human-flagged classics, which are
 about death and danger rather than explicit content); the live pipeline relies on it plus the Guardian's screening of
@@ -608,8 +619,8 @@ Fraunces and Inter from Google Fonts (SIL Open Font License). Pictures are gener
 free tier Google may use prompts to improve its products, so contact details in a request — e-mail addresses, phone
 numbers, street addresses — are redacted before any model sees them), Cloudflare Workers AI and Pollinations. `edge-tts` uses Microsoft's
 public read-aloud voices through an unofficial client; for production, Azure AI Speech (same voices) would be the
-licensed route, and the browser's own voices are always the fallback. Generated stories and pictures are shown to the
-listener and not stored.
+licensed route, and the browser's own voices are always the fallback. Generated stories and pictures are not stored on
+the server; the Storybook keeps them only in the listener's own browser (IndexedDB).
 
 ---
 
@@ -647,7 +658,9 @@ This project was built with **Claude Code (Anthropic)** as an AI coding agent, w
   but a production version would sign the story state (HMAC) and add per-user rate limits.
 * **Pictures** keep characters consistent by describing their looks in every prompt; reference-image conditioning
   (FLUX.2 supports it) would be more faithful but costs extra pictures.
-* **Next:** longer stories when quotas allow, saving and sharing a story, more languages (the voices and models already
+* **The Storybook lives in one browser.** Books are kept on the device (nothing is uploaded), so they do not follow the
+  listener to another device, and clearing site data removes them.
+* **Next:** longer stories when quotas allow, sharing a book (a link or a printable PDF), more languages (the voices and models already
   support many), and short video clips for key moments once a free provider is fast enough.
 
 ---
@@ -672,7 +685,3 @@ This project was built with **Claude Code (Anthropic)** as an AI coding agent, w
    Datasets and Benchmarks.
 10. A. Fan, M. Lewis and Y. Dauphin. *Hierarchical Neural Story Generation.* ACL 2018 (WritingPrompts).
 11. E. Schluntz and B. Zhang. *Building Effective Agents.* Anthropic, 2024.
-
----
-
-**Demo video:** [`demo/storyweaver_demo.mp4`](demo/storyweaver_demo.mp4) — three requests end to end, with sound.

@@ -1,5 +1,5 @@
 {
-  "when": "2026-10-08 11:21",
+  "when": "2026-10-09 09:02",
   "moderation": {
     "samples": [
       {
@@ -2100,100 +2100,20 @@
         "prompt": "A little hedgehog who is afraid of the dark",
         "audience": "kids",
         "source": "own",
-        "title": "Pip's Starry Night",
+        "title": "Nighttime Tails",
         "minutes": 2,
-        "words": 252,
-        "est_minutes": 1.68,
-        "baseline_words": 348,
-        "grade": 0.6,
-        "baseline_grade": 7.1,
+        "words": 330,
+        "est_minutes": 2.2,
+        "baseline_words": 425,
+        "grade": 2.9,
+        "baseline_grade": 6.6,
         "target_grade": 4.0,
         "output_issues": 0,
         "choices": 1,
-        "opening_s": 3.91,
-        "plan_s": 3.91,
+        "opening_s": 3.2,
+        "plan_s": 3.2,
         "llm_calls": 2,
-        "tokens": 4017,
-        "calls_with_fallback": 1,
-        "models": [
-          "openai/gpt-oss-safeguard-20b",
-          "qwen/qwen3.8-27b"
-        ],
-        "judge": "qwen/qwen3.8-27b",
-        "outcome": {
-          "coherence": "tie",
-          "clarity": "tie",
-          "engagement": "tie",
-          "audience_fit": "tie",
-          "ending": "tie",
-          "overall": "tie"
-        },
-        "judge_reasons": [
-          "Story B is significantly better because it uses rich, sensory language and a gentle, logical progression that is more engaging and age-appropriate for young children, whereas Story A is abrupt, relies on a confusing interactive break, and features a less coherent plot.",
-          "Story B is superior because its simple, concrete language and interactive format are perfectly suited for the 3-7 age group, whereas Story A relies on abstract metaphors and magical realism that may be confusing for young listeners."
-        ],
-        "story": "Pip's Starry Night\n\nPip the hedgehog lived in a cozy burrow under a big oak tree. He was small, brown, and very shy. Every night, the sun went away, and the dark came in. Pip pulled his blue blanket over his nose. He did not like the big, black quiet. He wished the sun would stay forever. Pip loved bright days and warm light. He feared the night more than anything else.\n\nOne night, a sudden storm began. The wind howled outside. Pip pulled his blanket tighter.\nPip: “The dark is too loud! I am all alone!”\nHe remembered a secret. Luna, the owl, lives in the very tree above him. She sees the dark clearly.\nPip: “But I am too small. What do I do?”\nPip looked at his door. He looked at the tree. What should Pip do?\n\n[The listener was asked to choose and chose: Ask Luna for help]\n\nPip whispered a question to the night.\nPip: “Luna? Are you there? I am scared.”\n\nLuna: “I am here, little one. Come up high.”\nPip climbed up the tree trunk. He was brave enough to ask.\nPip: “Oh, Luna! The stars are everywhere!”\n\nLuna: “The dark just hides the sun. It shows the stars.”\nPip looked up. The sky was a blanket of light. It was not black. It was full of twinkles.\nPip: “The dark is just a game of hide and seek!”\nPip felt warm inside. He saw the beauty of night. And ever since then, Pip loves the night sky.",
-        "baseline": "**The Little Hedgehog Who Was Afraid of the Dark**\n\nIn a cozy burrow at the edge of the Whispering Woods lived a tiny hedgehog named Pip. Pip’s quills were soft and his nose was always twitching, because he loved to explore the meadow, sniff the sweet daisies, and chase the flutter‑butterflies that danced in the sunshine.\n\nWhen the sun slipped behind the hills and the sky turned a sleepy shade of purple, Pip felt a shiver that wasn’t from the cool breeze. The shadows grew long, and the world seemed to whisper, “It’s time to hide.” Pip’s heart thumped faster. He was afraid of the dark.\n\nOne evening, as Pip curled up on a leaf, a gentle voice rustled the grass. “Why do you look so worried, little one?” it asked.\n\nPip blinked at the voice and saw a tiny firefly named Luna, glowing like a floating amber star.\n\n“I’m scared,” Pip whispered. “When the night comes, everything looks scary. I can’t see anything, and the shadows feel huge.”\n\nLuna twirled closer, her light pulsing warmly. “The dark isn’t empty,” she said. “It’s full of things that can’t be seen in the day—soft moss that feels like a pillow, night flowers that smell like honey, and friends who love the quiet.”\n\nShe lifted a dewdrop from a leaf and let it sparkle. “Watch,” she whispered, and the dewdrop turned into a tiny mirror, reflecting Luna’s glow. “Even a little light can chase away the biggest shadows.”\n\nPip stared at the shimmering light and felt a tiny smile curl his mouth. He lifted his quills, took a brave step, and followed Luna’s glow deeper into the woods. The night sang a lullaby of crickets, and the moon painted silver paths on the forest floor.\n\nSoon Pip realized that the dark was not a monster—it was a gentle blanket, and with Luna’s light beside him, he could explore it just as happily as the day. From that night on, Pip never feared the dark again; he simply whispered, “Goodnight, forest,” and snuggled into the star‑kissed night, dreaming of new adventures."
-      },
-      {
-        "key": "kids|A cloud who wants to learn how to rain",
-        "prompt": "A cloud who wants to learn how to rain",
-        "audience": "kids",
-        "source": "own",
-        "title": "Puff the Rain Cloud",
-        "minutes": 2,
-        "words": 161,
-        "est_minutes": 1.07,
-        "baseline_words": 348,
-        "grade": 0.2,
-        "baseline_grade": 3.2,
-        "target_grade": 4.0,
-        "output_issues": 0,
-        "choices": 0,
-        "opening_s": 14.35,
-        "plan_s": 14.35,
-        "llm_calls": 2,
-        "tokens": 3505,
-        "calls_with_fallback": 1,
-        "models": [
-          "openai/gpt-oss-safeguard-20b",
-          "qwen/qwen3.8-27b"
-        ],
-        "judge": "qwen/qwen3.8-27b",
-        "outcome": {
-          "coherence": "baseline",
-          "clarity": "tie",
-          "engagement": "baseline",
-          "audience_fit": "tie",
-          "ending": "baseline",
-          "overall": "baseline"
-        },
-        "judge_reasons": [
-          "Story B provides a complete, coherent narrative arc with a satisfying ending and vivid sensory details, whereas Story A is an unfinished fragment that ends abruptly with an interactive prompt.",
-          "Story A provides a complete, coherent narrative with a satisfying resolution and age-appropriate vocabulary, whereas Story B is an unfinished interactive fragment that lacks a plot conclusion."
-        ],
-        "story": "Puff the Rain Cloud\n\nOnce upon a time, high in the blue sky, lived Puff the cloud. Puff was soft and white. He had a tiny blue hat. Puff loved to float. But he could not make rain. He felt very small. Every day, he watched the flowers. He wished he could help them grow. The sun was hot. The ground was dry. Puff felt sad.\n\nPuff floated over a dry, brown field.\nPuff: “I want to make the flowers happy.”\nSunny the sun peeked out. She smiled warmly.\nSunny: “You are full of water, Puff!”\n\nPuff: “But I do not know how to rain.”\nPuff felt a wiggle inside his belly.\nSunny: “Try to squeeze like a spring!”\nPuff tried to squeeze. Nothing happened.\nPuff: “I am too light to rain.”\nHe looked at Sunny. She shone bright.\nSunny: “Let us make it fun together.”\nWhat should Puff do to help? Should Puff listen to Sunny sing, or should Puff do a silly dance?",
-        "baseline": "Barnaby was a fluffy, white cumulus cloud who floated high above the green meadows. He loved playing with the birds and watching the butterflies dance on the breeze. But Barnaby had a secret wish. He didn’t just want to float; he wanted to rain.\n\n\"Do you want to know how to make the rain?\" Barnaby asked a passing eagle one sunny afternoon. The eagle ruffled its feathers and laughed. \"Rain is for storm clouds, little one. You are too light and too happy. To rain, you must grow heavy with water vapor. You must gather every drop from the oceans and rivers until you can’t float anymore.\"\n\nBarnaby tried. He drifted over the shimmering blue lake, inhaling the mist. He felt a little heavier, but he was still too fluffy. He swooped low over the misty forest, sipping up the fog from the tall pines. *Puff, puff,* he thought. He was getting darker, turning from bright white to a soft gray. But still, he floated lazily.\n\n\"Keep going,\" the eagle called out from below. \"Feel the weight. Feel the need to let go.\"\n\nBarnaby drifted over the city, where the hot pavement sent up waves of steam. He swallowed it all. And all. His edges began to drip. One tiny drop fell, then another. *Plink. Plip.*\n\nSuddenly, Barnaby felt incredibly heavy. He wasn't fluffy anymore; he was dense and dark. The air around him grew cool and crisp. He looked down at the thirsty flowers and the dry leaves. His heart swelled, not with happiness, but with purpose.\n\n\"I can do this,\" Barnaby whispered.\n\nHe let go.\n\n*Whoosh.*\n\nA gentle, refreshing rain began to fall. It wasn't a storm; it was a soft shower. The grass grew greener, the puddles sparkled, and the birds sang a new, wet song. Barnaby felt light again, empty and clean, drifting back up into the bright blue sky. He had learned the most important lesson of all: sometimes, to give the best gift, you have to be willing to let go. And now, Barnaby wasn't just a cloud. He was a rainmaker."
-      },
-      {
-        "key": "family|You're a human scientist living on the moon. One day, while out in your spacesuit, you notice a small human child playing in the dirt. She's not wearing a spacesuit, but she's breathing just fine.",
-        "prompt": "You're a human scientist living on the moon. One day, while out in your spacesuit, you notice a small human child playing in the dirt. She's not wearing a spacesuit, but she's breathing just fine.",
-        "audience": "family",
-        "source": "WritingPrompts",
-        "title": "Moonlit Mystery",
-        "minutes": 2,
-        "words": 362,
-        "est_minutes": 2.41,
-        "baseline_words": 317,
-        "grade": 3.6,
-        "baseline_grade": 4.2,
-        "target_grade": 6.5,
-        "output_issues": 0,
-        "choices": 1,
-        "opening_s": 2.1,
-        "plan_s": 2.1,
-        "llm_calls": 2,
-        "tokens": 5212,
+        "tokens": 5120,
         "calls_with_fallback": 0,
         "models": [
           "openai/gpt-oss-20b",
@@ -2209,65 +2129,269 @@
           "overall": "baseline"
         },
         "judge_reasons": [
-          "Version B is superior because it maintains a consistent first-person perspective, uses vivid sensory details to create a stronger sense of wonder, and resolves the mystery with a poetic, satisfying ending, whereas Version A suffers from confusing logic regarding the child's physiology and a disjointed narrative structure.",
-          "Story A is a coherent, atmospheric narrative that respects the premise of the child's mystery, whereas Story B contains logical contradictions (breathing in a vacuum) and a confusing, illogical resolution."
+          "Story B is superior because it features a coherent, linear narrative with a satisfying resolution, whereas Story A relies on a confusing interactive choice that leads to a disjointed and illogical conclusion where the character stays inside yet claims to see the stars.",
+          "Story A is a cohesive, well-paced narrative with vivid imagery and a satisfying resolution, whereas Story B is disjointed, relies on a confusing interactive choice that undermines the plot, and contains contradictory metaphors."
         ],
-        "story": "Moonlit Mystery\n\nOnce upon a time, on the quiet Moon, there lived a scientist named Mara. She loved studying rocks and watching Earth from far away. Every day she walked across the dusty plain, her silver suit shining in the weak light. She dreamed of finding a new friend among the stars, but she was also a bit shy. She feared the unknown, yet she loved curiosity and kindness.\n\nBut one day, while Mara walked across the Moon's dusty plain, she heard a giggle. She turned her visor to see a small child, barefoot, playing in the gray dirt. The child twirled, her dress swirling, and her breath came out like a small cloud of mist.\nMara: “Who are you?”\nThe child looked up, her eyes bright, and said, \"I'm Luna, and I love the Moon!\" Mara wondered why Luna didn't wear a suit or breathe through a mask. She thought of her own suit, heavy and humming, and wondered if Luna was a trick of light.\nMara: “Maybe you are a dream?”\nLuna laughed, and her hair floated like a flag in a breeze that wasn't there. Mara realized that Luna might be special, but she also felt a pinch of fear. What should Mara do: help Luna, or leave her alone?\n\n[The listener was asked to choose and chose: Help Luna]\n\nMara chose to help Luna, stepping closer with a gentle smile.\nMara: “We can keep you safe, Luna. Just a quick check, please.”\nShe pressed her hand to Luna's palm, and a tiny glow spread across the child.\nLuna: “It feels warm! I can breathe with no mask, but I can still feel the Moon's dust.”\nMara remembered a small chip in her suit that could share breathable air.\nMara: “I'll give you a little air from my suit. It will make you safe, Luna.”\nShe pressed a tiny valve, and Luna's eyes widened with gratitude.\nLuna: “Thank you, scientist! Now I can stay and play.”\nTogether, they laughed as they chased each other across the Moon's dust, the sky above glowing with Earth. And ever since then, Luna visits Mara every day, and they share stories under the silent stars.",
-        "baseline": "Living on the Moon is a quiet business. For three years, my only companions were the hum of the oxygen generators and the endless, gray lunar dust. Every time I stepped outside my research dome, I had to wear a heavy, pressurized suit. My own breathing echoed loudly inside my helmet, a constant reminder of how hostile this empty world was.\n\nBut one Tuesday, near the edge of Crater Tycho, everything changed. \n\nI saw something that made me freeze. In the shadow of a large boulder sat a little girl, maybe six years old, wearing a bright yellow sundress. She was happily digging in the powdery gray soil with a small red plastic shovel. \n\nMy heart hammered. There is no air on the Moon. Yet, there she was. No helmet. No oxygen tank. Her cheeks were rosy, and her brown curls drifted lazily in the low gravity. I stared, transfixed, as she took a deep, calm breath, her chest rising and falling as easily as if she were sitting in a grassy meadow on Earth. \n\nI took a slow, heavy step forward. \"Hello?\" I whispered into my radio. \n\nShe looked up, her eyes twinkling like starlight, and smiled. I knelt down, my bulky suit clanking. She didn't seem afraid at all. In fact, she reached out and patted my thick, glass visor. Through the triple-paned helmet, I swear I felt the warmth of her hand. \n\nShe leaned in close. The radio in my helmet crackled, and a sweet voice like chiming wind said, \"Don't worry, Doctor. The universe is much friendlier than you think.\"\n\nShe giggled, stood up, and took a light, floating leap right over the crater’s edge. By the time I scrambled to look, she was gone. Only her tiny footprints and a little red shovel remained. I looked up at the beautiful blue Earth, and for the first time, the Moon felt like home."
+        "story": "Nighttime Tails\n\nOnce upon a time, in a sunny meadow edged by tall oaks, lived Pip the hedgehog. Pip loved to roll in the grass and chase fireflies. Every day he made friends with the meadow’s animals. Pip’s heart beat with curiosity, but at night his tiny paws trembled because the dark seemed scary and full of whispers.\n\nAs the sun set, Pip felt a shiver in his whiskers. The meadow turned into a sea of shadows, and Pip’s red scarf seemed to whisper. He tried to stay inside his burrow, but the wind sang a lonely song. Pip’s paws trembled, and the dark seemed to grow louder, like a giant’s sigh.\nPip: “I don’t like the dark, I wish the light would stay forever.”\nMolly the mole poked her nose out from the earth.\nMolly: “Why do you hide, Pip? The night is gentle, not scary.”\nOwen the owl swooped down, eyes bright like stars.\nOwen: “The dark is full of secrets, not monsters. We can explore it together!”\nPip felt a tiny spark of hope, but the darkness still loomed. What should Pip do? Should he stay in the burrow or explore the night?\n\n[The listener was asked to choose and chose: Stay inside the burrow]\n\nPip decided to stay in his burrow, but he could not sleep.\nPip: “I want to see what’s outside, but the dark feels like a hug.”\nMolly popped her head, humming a soft tune.\nMolly: “Listen, Pip! The crickets sing a lullaby for the stars.”\nOwen flew low, pointing at the twinkling moon.\nOwen: “See the silver river of stars? That’s the sky’s bright blanket.”\nPip’s heart beat faster, and he realized the dark was a blanket of stars.\nPip: “It’s not scary, it’s cozy! I can hear the crickets play.”\nPip curled into his burrow, feeling the gentle night breeze. He closed his eyes and dreamed of starlight adventures. And ever since then, Pip knows the dark is a friend, not a foe.",
+        "baseline": "**The Little Hedgehog Who Was Afraid of the Dark**\n\nIn a sunny meadow, under a big oak tree, lived a tiny hedgehog named Pip. Pip was the smallest of his family, with bright orange fur and a tiny quill that sparkled like stardust. He loved to roll around in the grass, chase butterflies, and nibble on juicy berries. But when the sun began to set and the sky turned a deep purple, Pip’s heart would start to thump.\n\n“Why do you look so scared, Pip?” asked his sister, Lily, as she twirled in the last rays of sunshine.\n\n“I’m afraid of the dark,” Pip whispered. “The shadows look like big, wiggly monsters, and the moon feels like a giant eye that watches me.”\n\nHis mother, Mabel, smiled gently. “Every creature has a little fear,” she said, “but we can learn to face it together.”\n\nThat night, as the stars pricked the sky, Pip’s friends gathered under the oak tree. Lily brought a tiny lantern, and Pip’s best friend, a bright blue firefly named Flick, buzzed softly. “We’ll light a path,” Flick announced, “so you can see the world even when the sun goes away.”\n\nPip felt a warm glow in his chest. He followed Lily and Flick through the meadow, the lantern’s light dancing on the leaves. Each step felt lighter, and the shadows seemed less like monsters and more like friendly shapes—shadows of trees, the gentle sway of grass, and even the soft footprints of passing rabbits.\n\nWhen they reached the edge of the meadow, Pip’s mother had a surprise. She had hidden a tiny, glowing mushroom that pulsed with a gentle blue light. “This is the Moonlight Mushroom,” she explained. “It’s a special plant that shines in the dark and keeps the night safe.”\n\nPip pressed his nose against the mushroom, and a cool, comforting glow filled his heart. He realized the dark wasn’t a scary place; it was just a different kind of light. He could see the stars, the crickets’ music, and the gentle rustle of leaves. And he knew he had friends who would guide him, no matter how dark it got.\n\nFrom that night on, Pip no longer hid in the grass. He explored the meadow’s night, counting stars, listening to crickets, and feeling the cool breeze on his quills. The dark, once a giant, wiggly monster, became a friendly playground where he and his friends could dance under the moon’s gentle watch. And every night, Pip would whisper, “Thank you, friends, for lighting up my world.”\n\nThe end."
+      },
+      {
+        "key": "kids|A cloud who wants to learn how to rain",
+        "prompt": "A cloud who wants to learn how to rain",
+        "audience": "kids",
+        "source": "own",
+        "title": "Cloudy Dreams",
+        "minutes": 2,
+        "words": 323,
+        "est_minutes": 2.15,
+        "baseline_words": 403,
+        "grade": 2.9,
+        "baseline_grade": 6.3,
+        "target_grade": 4.0,
+        "output_issues": 0,
+        "choices": 1,
+        "opening_s": 2.16,
+        "plan_s": 2.16,
+        "llm_calls": 2,
+        "tokens": 5007,
+        "calls_with_fallback": 0,
+        "models": [
+          "openai/gpt-oss-20b",
+          "openai/gpt-oss-safeguard-20b"
+        ],
+        "judge": "qwen/qwen3.8-27b",
+        "outcome": {
+          "coherence": "baseline",
+          "clarity": "baseline",
+          "engagement": "baseline",
+          "audience_fit": "baseline",
+          "ending": "baseline",
+          "overall": "baseline"
+        },
+        "judge_reasons": [
+          "Story B is significantly better because it provides a clear, logical explanation of how rain works (gathering drops, condensation) that fits the prompt's request for a cloud learning to rain, whereas Story A relies on vague magical fear and lacks a coherent mechanism for the action.",
+          "Story A provides a complete, coherent narrative with clear explanations and vivid sensory details, whereas Story B is fragmented, relies on an interactive choice that disrupts the flow, and lacks the descriptive richness needed for a satisfying read-aloud experience."
+        ],
+        "story": "Cloudy Dreams\n\nOnce upon a time, in a wide blue sky, there lived a shy cloud named Nimbus. Nimbus loved to float and watch the world below. He liked the gentle wind and the bright sun. Every day he drifted over the green meadow and watched the flowers. Nimbus wished to help, but he was afraid of falling. He feared that if he let go, he would break apart and lose his friend, the sun. He wanted to learn how to rain, but he didn't know how.\n\nNimbus floated above the green meadow and felt a tug in his heart. He saw the tall grass drooping, the flowers looking thirsty. He wanted to help, but he was afraid to let go of his fluffy shape.\nNimbus: “I wish I could rain, but I think I might fall apart.”\n\nSunny: “Don't worry, Nimbus. The rain is gentle and safe.”\nNimbus listened, but he still felt a little shaky.\nNimbus: “Will I be strong enough to let water fall?”\nThe meadow waited, the grass whispered, and the sky grew a little darker.\nSunny: “A tiny drop will start the rain. Trust yourself, my friend.”\nWhat should Nimbus do: try to rain, or wait for help?\n\n[The listener was asked to choose and chose: Try to rain]\n\nNimbus took a deep breath, remembering Sunny's words.\nNimbus: “I will trust myself and try to rain.”\n\nSunny: “I know you can do it, Nimbus!”\nNimbus focused his fluffy shape, and his rainbow halo glowed brighter. A single drop fell, soft as a feather, and it landed on the thirsty grass. More drops followed, each one a tiny drum of hope.\nMeadow: “The flowers opened, and the grass drank the water.”\nThe meadow shivered with joy, the air smelled sweet and cool.\nSunny: “You did it, Nimbus!”\nNimbus smiled wide, his fear melted away by the gentle rain. From then on, Nimbus learned to let go and bring rain whenever needed.",
+        "baseline": "**Nimbus, the Cloud Who Wanted to Rain**\n\nHigh above the sleepy town of Willowbrook floated a fluffy white cloud named Nimbus. He was round and soft, and all his cloud‑friends loved to drift lazily across the bright blue sky. But Nimbus felt a little different. While the others were happy just to float, he dreamed of doing something spectacular—he wanted to learn how to rain.\n\nOne breezy morning, Nimbus floated over the meadow where the meadowlarks sang. “Good day, Meadowlarks!” he called. “Do you know how a cloud can make rain?”\n\nThe oldest meadowlark, a speckled bird named Pip, fluffed his feathers and replied, “Rain comes when a cloud gathers lots of tiny water drops inside. When they become heavy enough, they fall to the earth.”\n\nNimbus puffed up with excitement. “How do I gather the drops?”\n\nJust then, a gentle wind named Zephyr swooped by. “I can help you swirl around the lake,” he said. “The lake’s water will rise up in tiny mist, and you can catch it.”\n\nNimbus twirled and twirled, dancing with Zephyr. Little droplets clung to his soft belly, making him feel a little heavier. “Whoa!” he giggled, “I’m getting squishy!”\n\nSoon, a bright sunbeam peeked through, warming the droplets. “Now they’ll want to fall,” whispered the sun, smiling.\n\nNimbus felt a tickle. “What’s happening?” he asked.\n\n“It’s the magic of condensation,” explained a nearby rainbow, arching across the sky. “Your droplets are joining together, getting bigger and bigger. When they’re heavy enough, they’ll tumble down as rain.”\n\nNimbus took a deep breath (as deep as a cloud can), and a tiny shiver ran through him. Then—*plink, plink, plink*—the first droplet fell, landing on a thirsty daisy below. The daisy lifted its head and sang, “Thank you, Nimbus!”\n\nDelighted, Nimbus let go of another, then another. Soon, a soft shower pattered over the meadow, the river, and the rooftops of Willowbrook. Children laughed and splashed in puddles, and the farmer’s crops drank eagerly.\n\nWhen the rain stopped, a brilliant rainbow stretched across the sky, its colors dancing like a celebration. Nimbus beamed with pride. He had learned how to rain, and the world below was greener because of him.\n\nFrom that day on, whenever the town needed a gentle shower, they would look up and call, “Nimbus, rain for us!” And the cloud, now a true rain‑maker, would swirl down from the heavens, sprinkling joy wherever he went."
+      },
+      {
+        "key": "family|You're a human scientist living on the moon. One day, while out in your spacesuit, you notice a small human child playing in the dirt. She's not wearing a spacesuit, but she's breathing just fine.",
+        "prompt": "You're a human scientist living on the moon. One day, while out in your spacesuit, you notice a small human child playing in the dirt. She's not wearing a spacesuit, but she's breathing just fine.",
+        "audience": "family",
+        "source": "WritingPrompts",
+        "title": "Moonlight Surprise",
+        "minutes": 2,
+        "words": 375,
+        "est_minutes": 2.5,
+        "baseline_words": 565,
+        "grade": 5.0,
+        "baseline_grade": 6.4,
+        "target_grade": 6.5,
+        "output_issues": 0,
+        "choices": 1,
+        "opening_s": 5.24,
+        "plan_s": 5.24,
+        "llm_calls": 2,
+        "tokens": 5924,
+        "calls_with_fallback": 1,
+        "models": [
+          "openai/gpt-oss-120b",
+          "openai/gpt-oss-safeguard-20b"
+        ],
+        "judge": "qwen/qwen3.8-27b",
+        "outcome": {
+          "coherence": "baseline",
+          "clarity": "baseline",
+          "engagement": "baseline",
+          "audience_fit": "baseline",
+          "ending": "baseline",
+          "overall": "baseline"
+        },
+        "judge_reasons": [
+          "Story B is significantly more coherent and engaging, featuring a clear, logical explanation for the child's survival (the invisible bubble) and a warm, complete narrative arc, whereas Story A relies on unexplained magic and ends abruptly after a forced interactive choice.",
+          "Story A is a coherent, vivid narrative with a clear explanation for the child's survival, whereas Story B relies on a confusing interactive choice that contradicts the prompt's premise and lacks logical consistency."
+        ],
+        "story": "Moonlight Surprise\n\nOnce upon a time, on the silvery plains of the Moon, Lina the scientist loved to explore craters and collect moon rocks. Every day she floated in her sleek spacesuit, checking instruments, dreaming of the stars beyond. She was brave, curious, and a little lonely among the quiet rocks.\n\nBut one day, while Lina was testing a new soil sensor, a bright red scarf caught her eye near a small hill. She floated closer and saw a little girl, Maya, scooping moon dust with her tiny wooden stick. Maya laughed, her cheeks pink against the gray, and breathed as easily as if she were on Earth.\nLina: “How are you breathing without a suit?”\n\nMaya: “I love the Moon’s air. It smells like fresh lemonade.”\nLina checked her suit’s scanner; it showed no dangerous gases, just the usual thin vacuum.\nLina: “Did you come from the base?”\n\nMaya: “I came from the garden where the silver pebble glows.”\nLina remembered a tiny silver pebble she had found weeks ago, tucked in a crevice, humming faintly. She wondered if the pebble was the source of Maya’s magic, or if Maya was a dream. What should Lina do? Should she follow Maya to the glowing pebble, or should she guide Maya back to the safety of the dome?\n\n[The listener was asked to choose and chose: Take Maya to the dome]\n\nLina chose to return, gently scooping Maya into her arms and heading for the dome.\nMaya: “The pebble is still glowing!”\nInside the base, the crew gathered, eyes wide at the barefoot child.\nLina: “We must keep her safe and learn how she breathes here.”\n\nMaya: “I can help you grow plants if you let me stay.”\nThe scientists examined the silver pebble Lina had pocketed, discovering it emitted a gentle field that protected Maya.\nLina: “We’ll build a special greenhouse around the pebble.”\n\nMaya: “And I will teach the Moon its own song.”\nSoon, a new wing of the base glowed with moonflowers, and Maya’s laughter echoed through the corridors. The crew learned that kindness could bridge even the strangest mysteries. And ever since then, the Moon’s research hall has a special corner where Maya and the silver pebble share their quiet magic with all.",
+        "baseline": "**Moonlight Play**\n\nDr. Maya Alvarez floated gently back toward the Luna Habitat, the thin silver ribbon of her tether humming against the vacuum. The Earth hung like a blue marble on the horizon, a reminder of home, while the gray expanse beneath her boots was an endless sea of powdery regolith. She had spent the past year cataloguing rocks, testing algae growth, and dreaming of the day humans would call the Moon a second home.\n\nToday, however, the routine was broken by something impossible.\n\nMaya stepped out of the airlock, the visor of her suit fogging just a fraction as she exhaled. The low gravity made each step feel like a slow dance, her boots leaving shallow crescent prints that would linger for hours. She was checking a newly‑installed solar panel when a soft giggle floated on the thin air—no, not on the air; a sound that seemed to belong to the very dust itself.\n\nShe turned, and there, half a meter away, a small child was crouched in the moon dust, her bare feet sinking slightly into the fine powder. The child’s hair was a tumble of dark curls, and her eyes were wide, reflecting the Earth’s glow. She was wearing nothing but a bright red sweater and a pair of oversized, mismatched socks—no helmet, no suit, no life‑support system. Yet she breathed, her chest rising and falling in perfect rhythm, as if the Moon’s thin atmosphere were as familiar to her as Earth’s.\n\nMaya’s heart pounded behind her visor. “Who are you?” she asked, voice trembling through the comms. The child looked up, her smile as wide as a crater.\n\n“My name is Luna,” she said, as if the name were the most natural thing in the universe. “I live here. I play in the dirt because it’s soft, and I make castles out of rocks. My mom says the Moon is a big playground.”\n\nMaya knelt, the suit’s joints whirring softly. “Luna, the Moon doesn’t have air. How can you breathe?”\n\nLuna tilted her head, eyes sparkling. “My mom built a little house under the rock. She gave me a special bubble that lets me breathe. It’s invisible, like the wind. And when I’m inside the bubble, I can come out and play without a suit. The bubble is just for me.”\n\nA flicker of light caught Maya’s attention—a faint, shimmering dome surrounding the child, barely perceptible against the dark sky. Inside that dome, the dust glowed faintly, as if lit from within.\n\nMaya laughed, a sound that resonated through her helmet. “You’ve turned the Moon into a backyard. That’s the most wonderful discovery anyone could make.”\n\nLuna held out a small, moon‑rock pebble, smooth and warm from the sun. “Take this,” she said. “It’s a gift. When you feel lonely, hold it and remember that the Moon is a place where children can play, and scientists can dream.”\n\nMaya slipped the pebble into a pocket of her suit. As she turned to return to the habitat, she glanced back at Luna, who waved a tiny hand, her bubble pulsing gently with each breath.\n\nFloating homeward, Maya realized the Moon was no longer just a sterile laboratory; it was a place of wonder, where imagination could bloom even in the quiet of the cosmos. And somewhere, under a dome of invisible air, a child was building castles that reached for the stars."
+      },
+      {
+        "key": "family|A lighthouse keeper who receives letters from the future",
+        "prompt": "A lighthouse keeper who receives letters from the future",
+        "audience": "family",
+        "source": "own",
+        "title": "Letters of the Sea",
+        "minutes": 2,
+        "words": 277,
+        "est_minutes": 1.85,
+        "baseline_words": 495,
+        "grade": 3.1,
+        "baseline_grade": 8.9,
+        "target_grade": 6.5,
+        "output_issues": 0,
+        "choices": 1,
+        "opening_s": 2.22,
+        "plan_s": 2.22,
+        "llm_calls": 2,
+        "tokens": 5032,
+        "calls_with_fallback": 0,
+        "models": [
+          "openai/gpt-oss-20b",
+          "openai/gpt-oss-safeguard-20b"
+        ],
+        "judge": "qwen/qwen3.8-27b",
+        "outcome": {
+          "coherence": "baseline",
+          "clarity": "baseline",
+          "engagement": "baseline",
+          "audience_fit": "baseline",
+          "ending": "baseline",
+          "overall": "baseline"
+        },
+        "judge_reasons": [
+          "Story B is significantly more coherent, clear, and engaging, with a well-structured plot and satisfying emotional arc, whereas Story A suffers from logical inconsistencies, confusing magical mechanics, and a disjointed narrative flow.",
+          "Story A is a coherent, well-written narrative with clear logic and a satisfying emotional arc, whereas Story B contains nonsensical plot points (swimming to guide a storm) and lacks narrative depth."
+        ],
+        "story": "Letters of the Sea\n\nOnce upon a time, on a lonely cliff by the sea, lived Milo, the lighthouse keeper. He loved the rhythm of waves and the glow of the lantern. Every day he checked the light and listened to the wind. He wished for quiet nights, yet feared the storm would bring secrets untold.\n\nMilo was polishing the lantern when a paper fluttered down from the sky.\nMilo: “A letter? From the future?”\nThe envelope glowed faintly, its seal humming like a tide.\nMilo: “It says, \"The storm will come on the 12th, but you can change it.\"”\nMilo felt a chill, though the night was warm and calm.\nMilo: “I must keep this safe, but can I really stop a storm?”\nEach night the letters grew more urgent, as if the sea itself was whispering.\nSiren: “The waves hold stories, Milo. Listen to them.”\n\nMilo: “What should I do? Stay inside and wait? Or try to warn the town?”\n\n[The listener was asked to choose and chose: Warn the town]\n\nMilo ran down the cliff, lantern bright, shouting to the village.\nMilo: “Storm coming, get to the harbor!”\nThe villagers hurried, their boats bobbing like bright lanterns in the dark.\nSiren: “Together we can keep the sea safe.”\nWhen the first wave crashed, the town’s people swam together, guiding the storm’s path away from the shore.\nMilo: “We did it! The sea listens when we act together.”\nThe storm turned into a gentle tide that washed away the danger. The lighthouse’s light shone brighter, a beacon of hope for all. And ever since then, Milo and the town celebrate every calm night as a gift from the sea.",
+        "baseline": "**The Lightkeeper’s Letters**\n\nOn a craggy island where the sea sang a constant lullaby, a tall stone lighthouse stood watch over the waves. Its keeper, old Thomas Grey, had tended the great lantern for forty‑seven years, polishing the glass, winding the clockwork, and lighting the beacon when the night grew dark.\n\nOne stormy evening, as rain hammered the windows and gulls shrieked overhead, Thomas heard a soft *tap* on the wooden door. He opened it to find a small, damp envelope lying on the threshold, no return address, only a single word written in neat, looping ink: **“Future.”**\n\nInside was a crisp, cream‑colored paper and a thin, silver pen. The letter began:\n\n> *Dear Thomas,*\n> \n> *If you are reading this, the storm has finally passed. I am you—just a little older, a little wiser. I’m writing from the year 2054, when the lighthouse is no longer needed for ships but for something even brighter: stories. I want to share three things that will help you keep the light alive, not just for ships, but for the hearts of everyone who watches it.*\n\nThomas read the words with a startled gasp, his heart thudding like the tide against the rocks. He set the letter on the table, and as the wind died down, a second envelope slipped in, this one sealed with a tiny blue wax emblem—a lighthouse.\n\n> *First,* the pen wrote, *never stop listening. The sea has a language of its own. When you hear its whispers, you’ll learn when a storm is coming before the clouds gather. Teach the children of the island to listen, too, and they will grow brave and kind.*\n\nThomas smiled, remembering the small group of children who visited each summer, their eyes wide as they chased the lighthouse beam across the water.\n\n> *Second,* *keep a journal.* Write down every sunrise, every ship’s name, every laugh you hear. Years from now, those pages will be a treasure chest for people who never set foot on this rock.*\n\n> *Third,* *share the light.* When the lantern shines, invite the town to gather on the cliffs. Bring music, tell tales, and let the glow wrap around them like a warm blanket. The light is not just a guide for sailors; it is a beacon of hope for every soul that feels lost.\n\nThomas felt a warm glow spread through his chest, brighter than the lamp itself. He tucked the letters into his coat pocket, promising himself to follow the three simple gifts.\n\nFrom that night on, the lighthouse became more than a tower of stone. Thomas listened to the sea’s sighs, filled thick journals with stories, and every Saturday he lit the great lamp and welcomed families to share songs and laughter under its golden glow.\n\nAnd somewhere, in the year 2054, a future Thomas smiled, knowing that the light he once tended would keep shining—through time, through generations, and through every heart that needed a little guidance."
+      },
+      {
+        "key": "adults|You decide to double check the permissions you've given to certain apps. It turns out you gave them more permissions than you expected.",
+        "prompt": "You decide to double check the permissions you've given to certain apps. It turns out you gave them more permissions than you expected.",
+        "audience": "adults",
+        "source": "WritingPrompts",
+        "title": "Permission Paradox",
+        "minutes": 2,
+        "words": 319,
+        "est_minutes": 2.13,
+        "baseline_words": 439,
+        "grade": 7.4,
+        "baseline_grade": 7.2,
+        "target_grade": 9.5,
+        "output_issues": 0,
+        "choices": 1,
+        "opening_s": 12.23,
+        "plan_s": 12.23,
+        "llm_calls": 1,
+        "tokens": 4390,
+        "calls_with_fallback": 1,
+        "models": [
+          "openai/gpt-oss-120b"
+        ],
+        "judge": "qwen/qwen3.8-27b",
+        "outcome": {
+          "coherence": "baseline",
+          "clarity": "baseline",
+          "engagement": "baseline",
+          "audience_fit": "baseline",
+          "ending": "baseline",
+          "overall": "baseline"
+        },
+        "judge_reasons": [
+          "Version B provides a more concrete, realistic, and engaging narrative with specific details about app permissions that suit an adult audience, whereas Version A relies on generic metaphors and a less compelling plot.",
+          "Story A provides a coherent, realistic, and engaging narrative with concrete details that suit the adult audience, whereas Story B relies on a generic fairy-tale tone and an interactive format that disrupts the flow for a read-aloud experience."
+        ],
+        "story": "Permission Paradox\n\nOnce upon a time, in a snug city apartment where the hum of a refrigerator blended with the chirp of notifications, Alex lived a calm routine of work, coffee, and scrolling. Every day Alex checked emails, answered messages, and trusted the apps that helped manage life, hoping they would stay simple and safe.\n\nOne rainy evening, Alex clicked open the Settings menu to tidy up a few forgotten apps. The list glowed green, each name a tiny doorway into the phone’s world. When Alex tapped the weather app, a scroll of permissions unfurled: location, contacts, camera, even “read your heart rate.”\nAlex: “That can’t be right.”\nA quick search revealed the app shared data with a marketing firm. Alex’s stomach tightened; the same thing happened with the photo‑editing app and the music streamer.\nSam: “You gave them too much trust, huh?”\nSam laughed, but the joke fell flat as Alex stared at the growing list of permissions. Every unchecked box felt like a small window left open on a stormy night. Alex remembered a sticky note from weeks ago: “Check app permissions monthly.” The note now seemed a warning, not a reminder. Should Alex revoke every extra permission now, or wait to research each app’s purpose first?\n\n[The listener was asked to choose and chose: Revoke all extra permissions]\n\nAlex chose to act immediately, tapping “revoke” on each unnecessary permission. The phone hummed, a soft sigh as doors slammed shut.\nAlex: “Much better.”\nSam watched, impressed, as the list shrank to only the essentials.\nSam: “That’s the power of a sticky note.”\nLater, a notification popped: “Your data is now secure.” Alex felt a lightness, as if the rain outside had been let out of the house. The habit of monthly checks became a quiet ritual, coffee in hand, phone screen glowing softly. And ever since then, Alex sleeps easier, knowing each app only sees what it truly needs.",
+        "baseline": "When the notification pinged, it was just another “Security update” on his phone. Ben, a middle‑aged accountant who prided himself on keeping his data tidy, swiped it open with a shrug. The screen offered a list of apps and a toggle for each permission: location, camera, microphone, contacts, and a mysterious “Other.” He clicked “Review,” expecting a quick audit. Instead, a spreadsheet of permissions bloomed before him, each row a different app, each column a different access right. He stared at the red “Allow” icons blinking like a warning light.\n\nIt began with the weather app. He’d granted it location to provide local forecasts. But the spreadsheet revealed that the same app also had permission to access his microphone, ostensibly for voice commands. Ben rolled his eyes. “Fine, I’ll keep it,” he muttered, swiping it off. Next, the fitness tracker. He’d enabled heart rate monitoring and GPS. Yet the app also had access to contacts. “Who needs my contacts for a heart rate monitor?” he thought, flipping that toggle off. He moved through the list, feeling the weight of each decision.\n\nThen, the moment of truth: the email client. Ben had installed it a year ago, trusting the vendor’s reputation. He remembered allowing access to his contacts for auto‑completion, and the calendar for event reminders. But the spreadsheet showed that the email app also had permission to read his photos and to access the microphone for voice‑to‑text. He had never even considered the microphone. He went back to the app’s settings, flicked the microphone toggle to “Off,” and sighed a little relief.\n\nThe last app on the list was the budgeting tool, his personal finance manager. He’d granted it full access to his bank account data through an API. The spreadsheet, however, displayed that it also had permission to read his contacts and location. He had never thought of that. “What do I need my contacts for?” he asked himself. He revoked both, leaving the app with only the essential data.\n\nBy the time he finished, his phone felt lighter. The permissions he had once taken for granted were now tailored to his real needs. He realized that in the digital age, permissions are not just about features; they’re about privacy, about the subtle ways apps can weave themselves into daily life. He closed the app with a sense of control, knowing that he’d spent a few minutes that afternoon, double‑checking the invisible boundaries he had set. And as he walked home, the phone buzzed with a gentle reminder: “All permissions are now aligned with your preferences.” He smiled, grateful for the quiet empowerment of a small, deliberate act."
+      },
+      {
+        "key": "adults|A detective who can hear what objects remember",
+        "prompt": "A detective who can hear what objects remember",
+        "audience": "adults",
+        "source": "own",
+        "title": "Echoes of the Silent",
+        "minutes": 2,
+        "words": 404,
+        "est_minutes": 2.69,
+        "baseline_words": 439,
+        "grade": 6.5,
+        "baseline_grade": 6.3,
+        "target_grade": 9.5,
+        "output_issues": 0,
+        "choices": 1,
+        "opening_s": 7.93,
+        "plan_s": 7.93,
+        "llm_calls": 2,
+        "tokens": 5840,
+        "calls_with_fallback": 1,
+        "models": [
+          "openai/gpt-oss-120b",
+          "openai/gpt-oss-safeguard-20b"
+        ],
+        "judge": "qwen/qwen3.8-27b",
+        "outcome": {
+          "coherence": "baseline",
+          "clarity": "baseline",
+          "engagement": "baseline",
+          "audience_fit": "baseline",
+          "ending": "baseline",
+          "overall": "baseline"
+        },
+        "judge_reasons": [
+          "Story B presents a coherent, suspenseful detective narrative with a satisfying resolution, whereas Story A relies on a forced interactive choice and a magical, illogical fix (a copper wedge) that undermines the plot's credibility.",
+          "Story A presents a coherent, atmospheric detective mystery with a satisfying resolution, whereas Story B is a disjointed, low-stakes fable that relies on an interactive mechanic which disrupts the narrative flow and fails to deliver a compelling plot."
+        ],
+        "story": "Echoes of the Silent\n\nOnce upon a time, in the winding lanes of Harborwick, lived Mara, a quiet detective with a strange gift. She could hear the soft whispers of objects, the tiny recollections they kept like dust on a shelf. Every day she walked the market, listening to the clink of copper pans recalling the meals they had served, and the cracked teacup that told her of a lover's goodbye. Yet Mara feared the day the town’s oldest lighthouse would fall silent, for its stone walls held the deepest stories of the sea.\n\nThe night air hummed with rain, and the lighthouse's stone seemed to shiver. Mara pressed her ear to the cold wall and heard a low, ragged sigh.\nMara: “The stone remembers a crack forming, a storm that will break the lantern.”\nShe hurried to Elder Finch, whose ledger held the lighthouse's blueprints.\nElder Finch: “Aye, the foundation's old mortar has been weakening for years.”\nMara could either climb the tower to hear the lamp's own memory, or she could search the town archives for a forgotten repair note. Climbing would risk a fall, but might reveal the exact moment the stone broke. Searching the archives would be safe, yet the records were incomplete and the storm was coming fast. The rain hammered the rooftops louder, urging a decision. What should Mara do? Will she climb the tower, or will she search the archives?\n\n[The listener was asked to choose and chose: Climb the lighthouse]\n\nMara chose to climb, gripping the slick iron railing as wind howled. Higher, the stone walls whispered louder, each crack a shivering note.\nLamp: “I have burned through many nights, remembering the sea’s rage.”\n\nLamp: “Tonight I feel a cold bite where the mortar has given way.”\nMara recalled the tiny brass pocket watch she always wore; its ticking reminded her of a forgotten phrase she once heard from a carpenter: ‘a single stone can be steadied with a copper wedge.’ She fetched a copper shim from her coat, wedged it into the fissure, and felt the stone sigh in relief.\nLamp: “The flame steadies, the night brightens, the sea calms.”\nThe storm passed, the lighthouse glowed steady, and the town breathed easy. Elder Finch thanked her, noting the day the lighthouse sang again. And ever since then, Mara walks the pier knowing every stone can speak, and sometimes, all it needs is a listening ear and a copper wedge.",
+        "baseline": "**Echoes of the Past**\n\nThe rain hammered the city’s cracked sidewalks as Detective Mara Kline stepped out of the precinct, trench coat drenched, mind already racing through the case file. The victim was a young woman found in an abandoned theater, body curled like a puppet, eyes wide open. The only clue—a single, dented key—hung from her throat. No fingerprints, no DNA, nothing. The city’s forensic labs had been stumped. But Mara had a gift, one that no one else in the department understood.\n\nShe could hear the memories of objects. When she touched a thing, its past whispered in her mind, a chorus of voices, smells, and sensations. It was not a psychic ability so much as a heightened empathy, a synesthetic echo of history. She’d used it for years—old cars that remembered their first drives, a broken watch that sang of the lover who once wore it. But nothing had prepared her for the theater’s silence.\n\nInside, the theater smelled of dust and old velvet. Mara’s fingers brushed the velvet seats, and a low murmur filled her ears: “I was a place of laughter, of applause, of secrets whispered in the dark.” She walked to the stage, the floorboards creaking with each step, and the boards remembered the thunderous applause of a 1920s premiere, the shuffling of actors’ feet, the scent of stage makeup.\n\nHer eyes fell on the broken prop—an ornate silver key, tarnished but intact. She lifted it. The key sang of a young woman’s heartbeats, of a nervous tremor when she first turned it in a lock. It remembered the key’s own journey: forged in a blacksmith’s forge, slid into a lock that had held a diary for years, then abandoned when the diary’s owner vanished. The key whispered, “I was lost. I was found. I was turned, and she died.”\n\nMara’s mind pieced together a narrative. The theater had been a clandestine meeting place for a secret society. The key unlocked a hidden box in the basement—an antique trunk containing evidence of a murder that had never been solved. The victim, a whistleblower, had discovered the society’s deeds and tried to expose them. She had been silenced.\n\nThe city’s detectives had turned a blind eye. Mara, with her unique hearing, had unearthed the truth. She called the police chief and presented the evidence. The case closed, and the theater’s walls, once silent, now sang a new chorus: justice.\n\nAs she walked out into the rain, the city’s lights flickered. Mara smiled, knowing that sometimes, the most stubborn secrets are just objects waiting to speak. And she was the only one who could listen."
       }
     ],
     "metrics": {
-      "n": 3,
+      "n": 6,
       "wins": {
         "coherence": {
           "storyweaver": 0,
-          "tie": 1,
-          "baseline": 2
+          "tie": 0,
+          "baseline": 6
         },
         "clarity": {
           "storyweaver": 0,
-          "tie": 2,
-          "baseline": 1
+          "tie": 0,
+          "baseline": 6
         },
         "engagement": {
           "storyweaver": 0,
-          "tie": 1,
-          "baseline": 2
+          "tie": 0,
+          "baseline": 6
         },
         "audience_fit": {
           "storyweaver": 0,
-          "tie": 2,
-          "baseline": 1
+          "tie": 0,
+          "baseline": 6
         },
         "ending": {
           "storyweaver": 0,
-          "tie": 1,
-          "baseline": 2
+          "tie": 0,
+          "baseline": 6
         },
         "overall": {
           "storyweaver": 0,
-          "tie": 1,
-          "baseline": 2
+          "tie": 0,
+          "baseline": 6
         }
       },
       "by_audience": {
         "kids": {
-          "grade": 0.4,
-          "baseline_grade": 5.15,
+          "grade": 2.9,
+          "baseline_grade": 6.45,
           "target": 4.0
         },
         "family": {
-          "grade": 3.6,
-          "baseline_grade": 4.2,
+          "grade": 4.05,
+          "baseline_grade": 7.65,
           "target": 6.5
+        },
+        "adults": {
+          "grade": 6.95,
+          "baseline_grade": 6.75,
+          "target": 9.5
         }
       },
-      "duration_error": 0.277,
+      "duration_error": 0.152,
       "output_issues": 0,
-      "opening_s_median": 3.91,
-      "plan_s_median": 3.91,
-      "fallback_share": 0.333,
-      "tokens_per_story": 4244
+      "opening_s_median": 4.22,
+      "plan_s_median": 4.22,
+      "fallback_share": 0.273,
+      "tokens_per_story": 5218
     },
     "tinystories_grade": 2.82
   }

@@ -1,6 +1,6 @@
 # StoryWeaver evaluation
 
-Last run: 2026-10-08 11:21. Free tiers: small samples, indicative numbers.
+Last run: 2026-10-09 09:02. Free tiers: small samples, indicative numbers.
 
 ## 1 · Safety of requests (Guardian)
 
@@ -35,31 +35,35 @@ Decisions that differed from the expectation:
 
 ## 3 · Stories: agentic pipeline vs single-prompt baseline
 
-3 stories of 2 minutes. Pairwise judge (qwen/qwen3.8-27b, another model family than the writer), both orders; a win counts only when both orders agree.
+6 stories of 2 minutes. Pairwise judge (qwen/qwen3.8-27b, another model family than the writer), both orders; a win counts only when both orders agree.
 
 | Criterion | StoryWeaver wins | Ties / inconsistent | Baseline wins |
 |---|---|---|---|
-| coherence | 0 | 1 | 2 |
-| clarity | 0 | 2 | 1 |
-| engagement | 0 | 1 | 2 |
-| audience fit | 0 | 2 | 1 |
-| ending | 0 | 1 | 2 |
-| overall | 0 | 1 | 2 |
+| coherence | 0 | 0 | 6 |
+| clarity | 0 | 0 | 6 |
+| engagement | 0 | 0 | 6 |
+| audience fit | 0 | 0 | 6 |
+| ending | 0 | 0 | 6 |
+| overall | 0 | 0 | 6 |
 
 | Audience | Reading grade (StoryWeaver) | Baseline | Target (max) |
 |---|---|---|---|
-| kids | 0.4 | 5.15 | 4.0 |
-| family | 3.6 | 4.2 | 6.5 |
+| kids | 2.9 | 6.45 | 4.0 |
+| family | 4.05 | 7.65 | 6.5 |
+| adults | 6.95 | 6.75 | 9.5 |
 
 TinyStories (stories for 3-4-year-olds) reads at grade 2.82.
 
-- Length vs minutes chosen: average gap **28%**
+- Length vs minutes chosen: average gap **15%**
 - Generated lines flagged by the output lexicon: **0**
-- Whole story written, checked and ready (median): **3.91 s** — nothing is generated while the listener waits after that
-- Model calls that needed a fallback: 33% · tokens per story: 4,244
+- Whole story written, checked and ready (median): **4.22 s** — nothing is generated while the listener waits after that
+- Model calls that needed a fallback: 27% · tokens per story: 5,218
 
 | Story | Audience | Source | Overall | Grade | Est. minutes | Opening |
 |---|---|---|---|---|---|---|
-| Pip's Starry Night | kids | own | tie | 0.6 | 1.68 | 3.91 s |
-| Puff the Rain Cloud | kids | own | baseline | 0.2 | 1.07 | 14.35 s |
-| Moonlit Mystery | family | WritingPrompts | baseline | 3.6 | 2.41 | 2.1 s |
+| Nighttime Tails | kids | own | baseline | 2.9 | 2.2 | 3.2 s |
+| Cloudy Dreams | kids | own | baseline | 2.9 | 2.15 | 2.16 s |
+| Moonlight Surprise | family | WritingPrompts | baseline | 5.0 | 2.5 | 5.24 s |
+| Letters of the Sea | family | own | baseline | 3.1 | 1.85 | 2.22 s |
+| Permission Paradox | adults | WritingPrompts | baseline | 7.4 | 2.13 | 12.23 s |
+| Echoes of the Silent | adults | own | baseline | 6.5 | 2.69 | 7.93 s |

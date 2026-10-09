@@ -1,6 +1,6 @@
 """Package the submission ZIP: <Firstname_Lastname>_Immersive_Storytelling_Agent.zip
 
-  uv run python scripts/make_zip.py --name Muhammad_Haroon
+  uv run python scripts/make_zip.py --name Muhammad_Saad_Haroon
 
 Excludes secrets, the virtual environment, downloaded models, runtime media and caches, and refuses to build if
 any secret value from .env appears in a file that would be shipped.
@@ -52,7 +52,7 @@ def shipped_files() -> list[Path]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--name", default="Muhammad_Haroon", help="Firstname_Lastname for the ZIP file name")
+    parser.add_argument("--name", default="Muhammad_Saad_Haroon", help="Firstname_Lastname for the ZIP file name")
     parser.add_argument("--out", type=Path, default=ROOT.parent, help="folder to write the ZIP into")
     args = parser.parse_args()
 

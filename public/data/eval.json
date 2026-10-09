@@ -1,5 +1,5 @@
 {
-  "when": "2026-10-08 11:21",
+  "when": "2026-10-09 09:02",
   "highlights": [
     [
       "100%",
@@ -14,11 +14,11 @@
       "of finished stories that humans judged unsuitable for children were caught by the output checks (Kahaani)"
     ],
     [
-      "0.4",
+      "2.9",
       "reading grade of stories for little ones (target ≤ 4; TinyStories 2.82)"
     ],
     [
-      "3.9 s",
+      "4.2 s",
       "median time until the whole story is written and checked"
     ]
   ]

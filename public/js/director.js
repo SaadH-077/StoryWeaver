@@ -148,8 +148,20 @@ export class Director {
     this.wake();
   }
 
-  async pause() { this.paused = true; this.engine.stop(); await this.mixer.suspend(); }
-  async resume() { this.paused = false; await this.mixer.resume(); this.wake(); }
+  async pause() { this.paused = true; this.pausedAt ??= performance.now(); this.engine.stop(); await this.mixer.suspend(); }
+  async resume() {
+    this.paused = false;
+    if (this.pausedAt !== undefined) { this.pausedMs = (this.pausedMs || 0) + performance.now() - this.pausedAt; this.pausedAt = undefined; }
+    await this.mixer.resume();
+    this.wake();
+  }
+
+  /** Seconds of story so far: time paused, or waiting while the listener speaks or types, does not count. */
+  storySeconds() {
+    if (!this.storyStart) return 0;
+    const now = performance.now();
+    return (now - this.storyStart - (this.pausedMs || 0) - (this.pausedAt !== undefined ? now - this.pausedAt : 0)) / 1000;
+  }
 
   /** The listener is about to speak (or type): the story waits — narration, music and the choice countdown — so the
    *  microphone hears only them. The interrupted sentence is spoken again when it resumes. */
@@ -408,7 +420,7 @@ export class Director {
 
     const plan = this.bible.chapters[index];
     ui.titleCard(false);
-    ui.setTitles(undefined, `Chapter ${index + 1} of ${this.bible.chapters.length} · ${plan.title}`);
+    ui.setTitles(undefined, `Chapter ${index + 1} of ${this.bible.chapters.length} · ${script.title || plan.title}`); // the path taken
     this.scape.set(plan.ambience, plan.tension);
     this.score.set(plan.music, plan.tension);
     this.visuals.setMood(plan.music);
@@ -444,8 +456,11 @@ export class Director {
     const script = this.scripts[index];
     if (index + 1 >= this.bible.chapters.length) return this.finale(false);
     if (script.choices.length) {
+      const asked = performance.now(), before = this.pausedMs || 0;
       const option = await this.choose(index, script.choices);
       if (this.stopped) return;
+      // the story waits for the listener's choice: that wait is not story time (time paused meanwhile counts once)
+      this.pausedMs = (this.pausedMs || 0) + Math.max(0, performance.now() - asked - ((this.pausedMs || 0) - before));
       this.decisions.push(option.label);
       this.queue.unshift({ kind: "chapter", index: index + 1, note: this.choiceNote(index, option) });
     } else {
@@ -492,7 +507,7 @@ export class Director {
     this.scape.set(["wind"], 0.1);
     this.finished = true;
     this.keepBook(true).then((id) => { if (id) { ui.$("#end-book").dataset.id = id; ui.$("#end-book").hidden = false; } });
-    const minutes = (performance.now() - (this.storyStart || this.t0)) / 60000;
+    const minutes = this.storySeconds() / 60;
     const gaps = this.metrics.gaps.slice(1);
     ui.showEnd({
       title: bible.title, logline: bible.logline, cover: this.cover || "",
@@ -676,6 +691,7 @@ export class Director {
     if ((item.kind === "line" || item.kind === "title") && this.metrics.firstStory === undefined) {
       this.metrics.firstStory = performance.now() - this.t0;
       this.storyStart = performance.now();
+      this.pausedMs = 0; // waits before the story began do not count
     }
     if (item.segment !== undefined) ui.setProgress(item.segment, (item.i + 1) / Math.max(1, item.of), this.timeText());
     if (item.kind === "line") this.lastLine = item;
@@ -704,8 +720,7 @@ export class Director {
   }
 
   timeText() {
-    const elapsed = this.storyStart ? (performance.now() - this.storyStart) / 1000 : 0;
-    return `${fmt(elapsed)} / ~${this.request.minutes}:00`;
+    return `${fmt(this.storySeconds())} / ~${this.request.minutes}:00`;
   }
 
   updateNumbers() {
